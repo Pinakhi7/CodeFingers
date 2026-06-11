@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CODEFINGERS - Typing Practice for Programmers</title>
+<meta name="description" content="Improve your coding typing speed with CODEFINGERS. Practice typing with real code in 10 programming languages.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;
+  --border:#2a3347;--border2:#3a4a62;
+  --text:#e8edf5;--text2:#8a9ab5;--text3:#4a5a75;
+  --accent:#5b8dee;--accent2:#3d6fd4;
+  --green:#4eca8b;--red:#e05c6a;--amber:#f0a84a;--teal:#3dc9c9;--purple:#9b7fe8;
+  --radius:12px;--radius-sm:8px;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--head:'Playfair Display',serif;
+  --shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font);overflow:hidden;}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;}
+.screen.active{display:flex;}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;gap:16px;padding:14px 32px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;flex-shrink:0;}
+.topbar-logo{display:flex;align-items:center;gap:10px;}
+.topbar-logo .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;color:#fff;font-weight:500;}
+.topbar-logo .name{font-family:var(--head);font-size:20px;}
+.topbar-user{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.user-pill{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:40px;padding:6px 14px 6px 8px;font-size:13px;font-weight:500;}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--accent));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;}
+.topbar-btn{background:transparent;border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:12px;padding:6px 14px;border-radius:40px;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.topbar-btn:hover{border-color:var(--border2);color:var(--text);}
+.topbar-btn.owner{border-color:var(--amber);color:var(--amber);}
+.topbar-btn.owner:hover{background:rgba(240,168,74,0.1);}
+.guest-badge{background:rgba(78,202,139,0.12);border:1px solid rgba(78,202,139,0.3);color:var(--green);font-size:11px;padding:4px 12px;border-radius:20px;white-space:nowrap;}
+
+/* ── HOME ── */
+#screen-home{background:var(--bg);overflow:auto;}
+.home-content{padding:36px 32px;}
+.progress-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:36px;}
+.prog-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;flex-direction:column;gap:6px;}
+.prog-card .val{font-size:26px;font-weight:600;color:var(--text);}
+.prog-card .val.green{color:var(--green);}
+.prog-card .val.accent{color:var(--accent);}
+.prog-card .val.amber{color:var(--amber);}
+.prog-card .lbl{font-size:11px;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;}
+.prog-card .sub{font-size:11px;color:var(--text3);}
+.section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+.section-head h2{font-size:18px;font-weight:600;}
+.section-head span{font-size:12px;color:var(--text2);}
+.trial-banner{background:linear-gradient(135deg,rgba(91,141,238,0.1),rgba(61,201,201,0.08));border:1px solid rgba(91,141,238,0.25);border-radius:var(--radius);padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:14px;}
+.trial-banner .tb-icon{font-size:24px;}
+.trial-banner .tb-text{flex:1;}
+.trial-banner .tb-title{font-size:14px;font-weight:600;margin-bottom:2px;}
+.trial-banner .tb-sub{font-size:12px;color:var(--text2);}
+.trial-banner .tb-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font);font-size:12px;font-weight:500;padding:8px 18px;border-radius:var(--radius-sm);cursor:pointer;white-space:nowrap;transition:background 0.15s;}
+.trial-banner .tb-btn:hover{background:var(--accent2);}
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:44px;}
+.lang-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:border-color 0.2s,transform 0.15s,box-shadow 0.2s;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;}
+.lang-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(91,141,238,0.15);}
+.lang-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:16px;font-weight:500;}
+.lang-name{font-size:14px;font-weight:500;}
+.lang-count{font-size:11px;color:var(--text3);}
+.py{background:rgba(52,152,219,0.15);color:#3498db;}
+.js{background:rgba(241,196,15,0.15);color:#e8b930;}
+.cpp{background:rgba(155,122,232,0.15);color:#9b7ae8;}
+.rs{background:rgba(224,92,74,0.15);color:#e05c4a;}
+.java{background:rgba(231,76,60,0.15);color:#e74c3c;}
+.go{background:rgba(0,173,216,0.15);color:#00add8;}
+.ts{background:rgba(49,120,198,0.15);color:#3178c6;}
+.sql{background:rgba(78,202,139,0.15);color:#4eca8b;}
+.bash{background:rgba(240,168,74,0.15);color:#f0a84a;}
+.kt{background:rgba(122,80,168,0.15);color:#7a50a8;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px;width:96%;max-width:680px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,0.5);animation:fadeUp 0.25s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.modal-header{padding:24px 28px 0;display:flex;align-items:center;gap:14px;}
+.modal-lang-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:16px;font-weight:500;}
+.modal-title{font-size:20px;font-weight:600;}
+.modal-close{margin-left:auto;background:var(--bg3);border:1px solid var(--border);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:18px;transition:background 0.15s;}
+.modal-close:hover{background:var(--border);}
+.diff-tabs{display:flex;gap:8px;padding:20px 28px 0;}
+.diff-tab{padding:7px 20px;background:transparent;border:1px solid var(--border);border-radius:40px;color:var(--text2);font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;}
+.diff-tab:hover{border-color:var(--border2);color:var(--text);}
+.diff-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.diff-tab.medium.active{background:var(--amber);border-color:var(--amber);}
+.diff-tab.hard.active{background:var(--red);border-color:var(--red);}
+.snippet-list{flex:1;overflow-y:auto;padding:16px 28px 24px;display:flex;flex-direction:column;gap:10px;}
+.snippet-list::-webkit-scrollbar{width:4px;}
+.snippet-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.snippet-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;cursor:pointer;transition:border-color 0.15s,background 0.15s;display:flex;align-items:center;gap:14px;}
+.snippet-item:hover{border-color:var(--accent);background:#1e2840;}
+.snippet-item.done{border-color:rgba(78,202,139,0.4);}
+.snippet-item.locked{cursor:default;opacity:0.7;}
+.snippet-item.locked:hover{border-color:var(--border);background:var(--bg3);}
+.snippet-item.trial-free{border-color:rgba(78,202,139,0.35);background:rgba(78,202,139,0.04);}
+.snip-num{width:28px;height:28px;border-radius:6px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--text3);flex-shrink:0;}
+.snip-info{flex:1;}
+.snip-title{font-size:14px;font-weight:500;margin-bottom:2px;}
+.snip-meta{font-size:11px;color:var(--text3);}
+.snip-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(78,202,139,0.15);color:var(--green);font-weight:500;letter-spacing:0.5px;flex-shrink:0;}
+.snip-trial-badge{font-size:10px;padding:3px 10px;border-radius:20px;background:rgba(91,141,238,0.15);color:var(--accent);font-weight:500;flex-shrink:0;}
+.snip-lock{font-size:16px;color:var(--text3);flex-shrink:0;}
+.snip-arrow{color:var(--text3);font-size:16px;flex-shrink:0;}
+
+/* ── AUTH POPUP ── */
+#auth-popup{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:500;backdrop-filter:blur(6px);overflow-y:auto;padding:20px 0;}
+#auth-popup.open{display:flex;}
+.auth-box{position:relative;position:relative;width:100%;max-width:430px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:40px 38px 36px;box-shadow:var(--shadow);animation:fadeUp 0.4s ease both;margin:auto;}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px;justify-content:center;}
+.logo-mark{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:18px;font-weight:500;color:#fff;}
+.logo-name{font-family:var(--head);font-size:26px;color:var(--text);letter-spacing:1px;}
+.auth-dismiss{position:absolute;top:14px;right:14px;background:var(--bg3);border:1px solid var(--border);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:18px;transition:background 0.15s;}
+.auth-dismiss:hover{background:var(--border);}
+.auth-title{font-size:19px;font-weight:600;margin-bottom:5px;}
+.auth-sub{font-size:13px;color:var(--text2);margin-bottom:22px;}
+.auth-mandatory-note{background:rgba(91,141,238,0.08);border:1px solid rgba(91,141,238,0.2);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.5;}
+.auth-error{display:none;background:rgba(224,92,106,0.12);border:1px solid rgba(224,92,106,0.3);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;}
+.auth-error.show{display:block;}
+.form-field{margin-bottom:14px;}
+.form-field label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:500;color:var(--text2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:7px;}
+.form-field input{width:100%;padding:11px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:border-color 0.2s;}
+.form-field input:focus{border-color:var(--accent);}
+.form-field input::placeholder{color:var(--text3);}
+.form-field input.valid{border-color:var(--green);}
+.form-field input.invalid{border-color:var(--red);}
+.pw-wrapper{position:relative;}
+.pw-wrapper input{padding-right:42px;}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text3);font-size:16px;user-select:none;transition:color 0.15s;}
+.pw-eye:hover{color:var(--text2);}
+.pw-strength{height:3px;border-radius:2px;margin-top:6px;transition:all 0.3s;background:var(--border);}
+.pw-strength.s1{background:var(--red);width:25%;}
+.pw-strength.s2{background:var(--amber);width:50%;}
+.pw-strength.s3{background:var(--accent);width:75%;}
+.pw-strength.s4{background:var(--green);width:100%;}
+.confirm-match{font-size:11px;margin-top:5px;min-height:14px;}
+.confirm-match.ok{color:var(--green);}
+.confirm-match.no{color:var(--red);}
+.btn-primary{width:100%;padding:13px;background:var(--accent);border:none;border-radius:var(--radius-sm);color:#fff;font-family:var(--font);font-size:15px;font-weight:500;cursor:pointer;transition:background 0.2s,transform 0.1s;margin-top:4px;}
+.btn-primary:hover{background:var(--accent2);}
+.btn-primary:active{transform:scale(0.98);}
+.auth-switch{margin-top:18px;text-align:center;font-size:13px;color:var(--text2);}
+.auth-switch a{color:var(--accent);cursor:pointer;text-decoration:none;}
+.auth-switch a:hover{text-decoration:underline;}
+
+/* ── TYPING SCREEN ── */
+#screen-typing{background:var(--bg);overflow:hidden;}
+.typing-topbar{display:flex;align-items:center;gap:16px;padding:12px 28px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;}
+.back-btn{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:13px;padding:7px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.back-btn:hover{border-color:var(--border2);color:var(--text);}
+.typing-info{display:flex;flex-direction:column;gap:2px;}
+.typing-info .t-title{font-size:15px;font-weight:600;}
+.typing-info .t-sub{font-size:11px;color:var(--text2);}
+.typing-stats{margin-left:auto;display:flex;gap:24px;}
+.t-stat{text-align:center;}
+.t-stat .v{display:block;font-family:var(--mono);font-size:20px;font-weight:500;color:var(--text);}
+.t-stat .v.green{color:var(--green);}
+.t-stat .v.red{color:var(--red);}
+.t-stat .v.amber{color:var(--amber);}
+.t-stat .l{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+
+/* typing main layout: code top, keyboard bottom */
+.typing-main{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;overflow-x:hidden;overflow-y:auto;
+  padding:16px 20px 12px;gap:14px;
+}
+.progress-row{width:100%;max-width:860px;flex-shrink:0;}
+.prog-track{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;width:0%;background:var(--accent);transition:width 0.1s;border-radius:2px;}
+
+/* Code window */
+.typing-window{width:100%;max-width:860px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;flex-shrink:0;}
+.tw-titlebar{background:var(--bg3);padding:9px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.tw-dots{display:flex;gap:6px;}
+.tw-dot{width:10px;height:10px;border-radius:50%;}
+.tw-dot.r{background:#ff5f57;}
+.tw-dot.y{background:#febc2e;}
+.tw-dot.g{background:#28c840;}
+.tw-filename{font-family:var(--mono);font-size:11px;color:var(--text3);margin-left:8px;}
+.tw-lang{margin-left:auto;font-size:10px;color:var(--accent);background:rgba(91,141,238,0.12);padding:3px 10px;border-radius:20px;font-family:var(--mono);}
+
+/* CODE AREA — scrollable, auto-scrolls to cursor */
+.code-area{
+  padding:14px 24px;
+  font-family:var(--mono);font-size:14px;line-height:1.8;
+  user-select:none;white-space:pre;
+  overflow-x:auto;overflow-y:auto;
+  height:170px;
+  position:relative;
+  scroll-behavior:smooth;
+}
+/* Characters */
+.ch-done{color:var(--green);}
+.ch-cur{color:#fff;background:var(--accent);border-radius:2px;padding:0 1px;}
+.ch-err{color:#fff;background:var(--red);border-radius:2px;padding:0 1px;}
+.ch-wait{color:#4a5568 !important;}
+/* Newline indicator */
+.ch-nl-done{color:var(--green);opacity:0.4;font-size:10px;vertical-align:middle;}
+.ch-nl-cur{color:#fff;background:var(--accent);font-size:10px;vertical-align:middle;border-radius:2px;padding:0 2px;}
+.ch-nl-wait{color:#3a4a60;font-size:10px;vertical-align:middle;}
+
+.tw-input-bar{padding:10px 24px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg3);flex-shrink:0;}
+.tw-prompt{font-family:var(--mono);font-size:14px;color:var(--accent);}
+.tw-hint{font-size:11px;color:var(--text3);}
+#typing-input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;}
+
+/* Result panel */
+/* ── RESULT SCREEN ── */
+#screen-result{
+  background:var(--bg);
+  flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 20px;
+  gap:0;
+}
+.rs-wrap{
+  width:100%;max-width:680px;
+  display:flex;flex-direction:column;
+  align-items:center;
+  gap:24px;
+}
+.rs-header{
+  text-align:center;
+}
+.rs-emoji{ font-size:52px; line-height:1; margin-bottom:10px; }
+.rs-title{
+  font-family:var(--head);font-size:28px;font-weight:700;
+  color:var(--text);margin-bottom:6px;
+}
+.rs-subtitle{ font-size:14px;color:var(--text3); }
+.rs-cards{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%;
+}
+.rs-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:22px 16px;text-align:center;
+  transition:border-color 0.2s;
+}
+.rs-card:hover{ border-color:var(--border2); }
+.rs-card .val{
+  display:block;font-family:var(--mono);font-size:32px;font-weight:600;
+  color:var(--text);margin-bottom:4px;
+}
+.rs-card .val.green{ color:var(--green); }
+.rs-card .val.red{ color:var(--red); }
+.rs-card .val.amber{ color:var(--amber); }
+.rs-card .val.accent{ color:var(--accent); }
+.rs-card .lbl{
+  font-size:10px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--text3);font-weight:500;
+}
+.rs-rank{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:40px;padding:10px 28px;
+  font-size:15px;font-weight:600;color:var(--text2);
+  letter-spacing:0.5px;
+}
+.rs-actions{
+  display:flex;justify-content:space-between;align-items:center;
+  width:100%;margin-top:8px;
+}
+.rs-left-btns{ display:flex;gap:10px; }
+.btn-rs-retry{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-family:var(--font);font-size:13px;
+  padding:10px 20px;border-radius:var(--radius-sm);cursor:pointer;
+  transition:all 0.15s;display:flex;align-items:center;gap:6px;
+}
+.btn-rs-retry:hover{ border-color:var(--border2);color:var(--text); }
+.btn-rs-back{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-family:var(--font);font-size:13px;
+  padding:10px 20px;border-radius:var(--radius-sm);cursor:pointer;
+  transition:all 0.15s;display:flex;align-items:center;gap:6px;
+}
+.btn-rs-back:hover{ border-color:var(--border2);color:var(--text); }
+.btn-rs-next{
+  background:var(--accent);border:none;color:#fff;
+  font-family:var(--font);font-size:15px;font-weight:600;
+  padding:12px 32px;border-radius:var(--radius-sm);cursor:pointer;
+  transition:background 0.15s,transform 0.1s;
+  display:flex;align-items:center;gap:8px;
+}
+.btn-rs-next:hover{ background:var(--accent2);transform:translateY(-1px); }
+.btn-rs-next:active{ transform:translateY(0); }
+/* Mistake heatmap strip */
+.rs-mistakes{
+  width:100%;background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px 18px;
+}
+.rs-mistakes-title{
+  font-size:11px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:10px;font-weight:500;
+}
+.rs-mistake-chars{
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.rs-mc{
+  font-family:var(--mono);font-size:13px;
+  background:rgba(248,81,73,0.15);border:1px solid rgba(248,81,73,0.3);
+  color:var(--red);border-radius:4px;padding:3px 7px;
+}
+/* Legacy result-panel — hide (replaced by screen) */
+.result-panel{display:none!important;}
+.result-actions{display:none!important;}
+/* Auth popup X close button */
+.auth-close-x{
+  position:absolute;top:14px;right:14px;
+  width:30px;height:30px;border-radius:50%;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-size:18px;line-height:1;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;z-index:10;
+}
+.auth-close-x:hover{ background:var(--border2);color:var(--text); }
+.auth-close-x.hidden{ display:none; }
+.btn-sec{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:13px;padding:9px 18px;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.15s;}
+.btn-sec:hover{border-color:var(--border2);color:var(--text);}
+.btn-acc{background:var(--accent);border:none;color:#fff;font-family:var(--font);font-size:13px;padding:9px 22px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s;}
+.btn-acc:hover{background:var(--accent2);}
+
+/* ── KEYBOARD ── */
+/* ── KEYBOARD (keyup style) ── */
+.keyboard-section{
+  width:100%;max-width:900px;
+  background:#161b22;
+  border:1px solid #21262d;
+  border-radius:12px;
+  padding:25px 25px 0 25px;
+  flex-shrink:0;
+  position:relative;
+  overflow:visible;
+}
+#kb-container{ position:relative; z-index:5; }
+#kb-hand-overlay{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;z-index:10;overflow:visible;
+}
+.kb-finger-guide{display:flex;justify-content:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.kfg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#8b949e;}
+.kfg-dot{width:9px;height:9px;border-radius:50%;}
+.kb-row,.row{display:flex;justify-content:center;gap:6px;margin-bottom:6px;}
+.key{
+  background:#21262d;border-radius:6px;color:#8b949e;
+  font-weight:600;font-size:14px;
+  height:44px;width:44px;
+  display:flex;align-items:center;justify-content:center;
+  box-sizing:border-box;border-bottom:3px solid #0d1117;
+  flex-shrink:0;transition:background-color 0.1s,color 0.1s,transform 0.1s;
+}
+.key.bksp{width:85px;} .key.tab{width:65px;} .key.slash{width:55px;}
+.key.caps{width:75px;} .key.enter{width:95px;} .key.shift{width:115px;}
+.key.space{width:310px;} .key.ctrl,.key.alt{width:60px;}
+.pinky-l{border-top:3px solid #ff5964;} .ring-l{border-top:3px solid #ff9015;}
+.middle-l{border-top:3px solid #fee440;} .index-l{border-top:3px solid #00bbf9;}
+.index-r{border-top:3px solid #00f5d4;} .middle-r{border-top:3px solid #9b5de5;}
+.ring-r{border-top:3px solid #f15bb5;} .pinky-r{border-top:3px solid #00f5d4;}
+.thumb{border-top:3px solid #a8dadc;}
+.key.active-next,.key.jungle-target{
+  background:#388bfd!important;color:#fff!important;
+  border-bottom-color:#1f6feb;
+  box-shadow:0 0 12px rgba(56,139,253,0.6);
+  transform:scale(1.08);
+}
+.key.pressed-correct{
+  background:rgba(86,211,100,0.25)!important;color:#56d364!important;
+  border-bottom-color:#2ea043;transform:scale(0.93);
+}
+.key.pressed-wrong{
+  background:rgba(248,81,73,0.25)!important;color:#f85149!important;
+  border-bottom-color:#da3633;transform:scale(0.93);
+}
+.hand-base{fill:rgba(33,38,45,0.5);stroke:rgba(255,255,255,0.1);stroke-width:1.5;}
+.guide-path{
+  fill:none;stroke-width:18px;stroke-linecap:round;stroke-linejoin:round;
+  opacity:0.25;transition:opacity 0.15s ease,stroke 0.15s ease;
+}
+.guide-path.active{opacity:0.82;stroke-width:20px;}
+.kb-hand-pad{height:115px;}
+/* ── ADMIN ── */
+/* ── ADMIN ── */
+#screen-admin{background:var(--bg);overflow:auto;}
+.admin-content{padding:32px;}
+.admin-title{font-family:var(--head);font-size:28px;margin-bottom:6px;}
+.admin-sub{font-size:13px;color:var(--text2);margin-bottom:28px;}
+.admin-section{margin-bottom:40px;}
+.admin-section h3{font-size:14px;font-weight:600;color:var(--amber);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px;}
+.admin-table th{text-align:left;padding:10px 14px;color:var(--text3);font-weight:500;letter-spacing:0.5px;text-transform:uppercase;font-size:11px;border-bottom:1px solid var(--border);}
+.admin-table td{padding:11px 14px;border-bottom:1px solid rgba(42,51,71,0.5);color:var(--text2);}
+.admin-table td:first-child{color:var(--text);font-weight:500;}
+.admin-table tr:hover td{background:var(--bg2);}
+.admin-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:28px;}
+.admin-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;}
+.admin-stat .v{font-size:28px;font-weight:600;color:var(--amber);}
+.admin-stat .l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px;}
+.admin-refresh{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:12px;padding:6px 16px;border-radius:var(--radius-sm);cursor:pointer;margin-bottom:20px;transition:all 0.15s;}
+.admin-refresh:hover{border-color:var(--amber);color:var(--amber);}
+.empty-note{color:var(--text3);padding:20px 14px;font-size:13px;}
+
+/* ── OWNER SETUP ── */
+#owner-setup-popup{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:600;backdrop-filter:blur(8px);}
+#owner-setup-popup.open{display:flex;}
+.owner-setup-box{background:var(--bg2);border:1px solid var(--amber);border-radius:20px;padding:44px 40px 40px;width:100%;max-width:420px;box-shadow:0 0 48px rgba(240,168,74,0.15);animation:fadeUp 0.4s ease both;}
+.owner-crown{font-size:36px;text-align:center;margin-bottom:16px;}
+.owner-setup-title{font-size:20px;font-weight:600;text-align:center;margin-bottom:8px;color:var(--amber);}
+.owner-setup-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:28px;line-height:1.6;}
+
+@media(max-width:680px){
+  .home-content,.topbar{padding:16px;}
+  .typing-topbar,.typing-main{padding:10px 12px;}
+  .typing-stats{gap:12px;}
+  .t-stat .v{font-size:16px;}
+  .code-area{font-size:12px;padding:12px 14px;height:180px;}
+  .progress-strip{grid-template-columns:repeat(2,1fr);}
+  .auth-box{position:relative;padding:28px 20px 24px;}
+  .key{min-width:28px;height:28px;font-size:10px;}
+  .key.space{min-width:150px;}
+}
+
+/* ── LANDING PAGE ── */
+#screen-landing{background:var(--bg);align-items:center;justify-content:center;}
+.landing-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:48px 32px;max-width:560px;gap:20px;}
+.landing-logo-mark{width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--teal));display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:24px;color:#fff;margin-bottom:4px;}
+.landing-logo-name{font-family:var(--head);font-size:42px;letter-spacing:2px;background:linear-gradient(135deg,var(--text) 40%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.landing-tagline{font-size:18px;color:var(--text2);font-weight:300;}
+.landing-sub{font-size:14px;color:var(--text3);line-height:1.8;max-width:420px;}
+.cta-primary{background:linear-gradient(135deg,var(--accent),var(--teal));border:none;color:#fff;font-family:var(--font);font-size:16px;font-weight:600;padding:14px 40px;border-radius:var(--radius);cursor:pointer;margin-top:8px;transition:all 0.2s;box-shadow:0 8px 28px rgba(91,141,238,0.3);}
+.cta-primary:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(91,141,238,0.45);}
+</style>
+</head>
+<body>
+
+<!-- ════ LANDING ════ -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-wrap">
+    <div class="landing-logo-mark">&lt;/&gt;</div>
+    <div class="landing-logo-name">CodeFingers</div>
+    <div class="landing-tagline">Type real code. Build real speed.</div>
+    <div class="landing-sub">A typing practice tool for programmers — practice with actual code snippets across 10 languages, with live finger guides and accuracy tracking.</div>
+    <button class="cta-primary" onclick="enterApp()">Get Started</button>
+  </div>
+</div>
+
+<!-- ════ HOME ════ -->
+<div id="screen-home" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="mark">&lt;/&gt;</div>
+      <div class="name">CodeFingers</div>
+    </div>
+    <div class="topbar-user" id="topbar-user-area"></div>
+  </div>
+  <div class="home-content">
+    <div id="trial-banner" class="trial-banner" style="display:none;">
+      <div class="tb-icon">⚡</div>
+      <div class="tb-text">
+        <div class="tb-title">Guest Mode — Try any "Hello World" free</div>
+        <div class="tb-sub">Register to unlock all exercises and track your progress across sessions.</div>
+      </div>
+      <button class="tb-btn" onclick="openAuthPopup('register')">Register Free →</button>
+    </div>
+    <div class="progress-strip" id="progress-strip">
+      <div class="prog-card"><span class="val green" id="stat-sessions">0</span><span class="lbl">Sessions</span><span class="sub">total practice sessions</span></div>
+      <div class="prog-card"><span class="val accent" id="stat-bestwpm">0</span><span class="lbl">Best WPM</span><span class="sub">personal record</span></div>
+      <div class="prog-card"><span class="val" id="stat-avgacc">—</span><span class="lbl">Avg Accuracy</span><span class="sub">across all sessions</span></div>
+      <div class="prog-card"><span class="val amber" id="stat-snips">0</span><span class="lbl">Snippets Done</span><span class="sub">unique programs typed</span></div>
+    </div>
+    <div class="section-head"><h2>Choose a Language</h2><span>Click to see practice programs</span></div>
+    <div class="lang-grid">
+      <div class="lang-card" onclick="openLang('python')"><div class="lang-icon py">Py</div><div class="lang-name">Python</div><div class="lang-count">12 programs</div></div>
+      <div class="lang-card" onclick="openLang('javascript')"><div class="lang-icon js">JS</div><div class="lang-name">JavaScript</div><div class="lang-count">12 programs</div></div>
+      <div class="lang-card" onclick="openLang('cpp')"><div class="lang-icon cpp">C++</div><div class="lang-name">C++</div><div class="lang-count">9 programs</div></div>
+      <div class="lang-card" onclick="openLang('rust')"><div class="lang-icon rs">Rs</div><div class="lang-name">Rust</div><div class="lang-count">9 programs</div></div>
+      <div class="lang-card" onclick="openLang('java')"><div class="lang-icon java">Jv</div><div class="lang-name">Java</div><div class="lang-count">9 programs</div></div>
+      <div class="lang-card" onclick="openLang('go')"><div class="lang-icon go">Go</div><div class="lang-name">Go</div><div class="lang-count">9 programs</div></div>
+      <div class="lang-card" onclick="openLang('typescript')"><div class="lang-icon ts">TS</div><div class="lang-name">TypeScript</div><div class="lang-count">9 programs</div></div>
+      <div class="lang-card" onclick="openLang('sql')"><div class="lang-icon sql">SQL</div><div class="lang-name">SQL</div><div class="lang-count">9 programs</div></div>
+      <div class="lang-card" onclick="openLang('bash')"><div class="lang-icon bash">$_</div><div class="lang-name">Bash</div><div class="lang-count">9 programs</div></div>
+      <div class="lang-card" onclick="openLang('kotlin')"><div class="lang-icon kt">Kt</div><div class="lang-name">Kotlin</div><div class="lang-count">9 programs</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SNIPPET MODAL ════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-lang-icon" id="modal-icon"></div>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-close" onclick="closeModalDirect()">×</div>
+    </div>
+    <div class="diff-tabs">
+      <button class="diff-tab active" onclick="switchDiff(this,'easy')">Easy</button>
+      <button class="diff-tab medium" onclick="switchDiff(this,'medium')">Medium</button>
+      <button class="diff-tab hard" onclick="switchDiff(this,'hard')">Hard</button>
+    </div>
+    <div class="snippet-list" id="snippet-list"></div>
+  </div>
+</div>
+
+<!-- ════ TYPING SCREEN ════ -->
+<div id="screen-typing" class="screen">
+  <div class="typing-topbar">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="typing-info">
+      <div class="t-title" id="ty-title">Program Name</div>
+      <div class="t-sub" id="ty-sub">Python · Easy</div>
+    </div>
+    <div class="typing-stats">
+      <div class="t-stat"><span class="v" id="ty-wpm">0</span><span class="l">WPM</span></div>
+      <div class="t-stat"><span class="v" id="ty-acc">100%</span><span class="l">ACC</span></div>
+      <div class="t-stat"><span class="v" id="ty-err">0</span><span class="l">ERR</span></div>
+      <div class="t-stat"><span class="v" id="ty-time">0s</span><span class="l">TIME</span></div>
+    </div>
+  </div>
+  <div class="typing-main">
+    <div class="progress-row"><div class="prog-track"><div class="prog-fill" id="ty-prog"></div></div></div>
+
+    <div class="typing-window" id="typing-window" onclick="focusTyping()">
+      <div class="tw-titlebar">
+        <div class="tw-dots"><div class="tw-dot r"></div><div class="tw-dot y"></div><div class="tw-dot g"></div></div>
+        <span class="tw-filename" id="tw-filename">main.py</span>
+        <span class="tw-lang" id="tw-lang">python</span>
+      </div>
+      <div class="code-area" id="code-area"></div>
+      <div class="result-panel" id="result-panel">
+        <div class="result-title">Session Complete ✓</div>
+        <div class="result-cards">
+          <div class="rc"><span class="v green" id="r-wpm">0</span><span class="l">WPM</span></div>
+          <div class="rc"><span class="v" id="r-acc">100%</span><span class="l">Accuracy</span></div>
+          <div class="rc"><span class="v red" id="r-err">0</span><span class="l">Errors</span></div>
+        </div>
+        <div class="rank-badge" id="r-rank">—</div>
+        <div class="result-actions">
+          <button class="btn-sec" onclick="retrySnippet()">↺ Retry</button>
+          <button class="btn-acc" onclick="goBack()">← Back to list</button>
+        </div>
+      </div>
+      <div class="tw-input-bar" id="tw-input-bar">
+        <span class="tw-prompt">▶</span>
+        <span class="tw-hint" id="tw-hint-text">Click here and start typing…</span>
+        <input id="typing-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      </div>
+    </div>
+
+    <!-- Keyboard (keyup style) -->
+    <div class="keyboard-section" id="keyboard-section">
+      <div class="keyboard" id="kb-container">
+        <div class="kb-finger-guide" id="kb-guide-legend"></div>
+        <div class="row" id="kb-row-0">
+          <div class="key pinky-l" id="key-BACKTICK">`</div>
+          <div class="key pinky-l" id="key-1">1</div>
+          <div class="key ring-l" id="key-2">2</div>
+          <div class="key middle-l" id="key-3">3</div>
+          <div class="key index-l" id="key-4">4</div>
+          <div class="key index-l" id="key-5">5</div>
+          <div class="key index-r" id="key-6">6</div>
+          <div class="key index-r" id="key-7">7</div>
+          <div class="key middle-r" id="key-8">8</div>
+          <div class="key ring-r" id="key-9">9</div>
+          <div class="key pinky-r" id="key-0">0</div>
+          <div class="key pinky-r" id="key-MINUS">-</div>
+          <div class="key pinky-r" id="key-EQUAL">=</div>
+          <div class="key bksp pinky-r" id="key-Backspace">Bksp</div>
+        </div>
+        <div class="row" id="kb-row-1">
+          <div class="key tab pinky-l" id="key-Tab">Tab</div>
+          <div class="key pinky-l" id="key-q">q</div>
+          <div class="key ring-l" id="key-w">w</div>
+          <div class="key middle-l" id="key-e">e</div>
+          <div class="key index-l" id="key-r">r</div>
+          <div class="key index-l" id="key-t">t</div>
+          <div class="key index-r" id="key-y">y</div>
+          <div class="key index-r" id="key-u">u</div>
+          <div class="key middle-r" id="key-i">i</div>
+          <div class="key ring-r" id="key-o">o</div>
+          <div class="key pinky-r" id="key-p">p</div>
+          <div class="key pinky-r" id="key-LBRACKET">[</div>
+          <div class="key pinky-r" id="key-RBRACKET">]</div>
+          <div class="key slash pinky-r" id="key-BACKSLASH">\</div>
+        </div>
+        <div class="row" id="kb-row-2">
+          <div class="key caps pinky-l" id="key-CapsLock">Caps</div>
+          <div class="key pinky-l" id="key-a">a</div>
+          <div class="key ring-l" id="key-s">s</div>
+          <div class="key middle-l" id="key-d">d</div>
+          <div class="key index-l" id="key-f">f</div>
+          <div class="key index-l" id="key-g">g</div>
+          <div class="key index-r" id="key-h">h</div>
+          <div class="key index-r" id="key-j">j</div>
+          <div class="key middle-r" id="key-k">k</div>
+          <div class="key ring-r" id="key-l">l</div>
+          <div class="key pinky-r" id="key-SEMICOLON">;</div>
+          <div class="key pinky-r" id="key-QUOTE">'</div>
+          <div class="key enter pinky-r" id="key-Enter">Enter</div>
+        </div>
+        <div class="row" id="kb-row-3">
+          <div class="key shift pinky-l" id="key-ShiftLeft">Shift</div>
+          <div class="key pinky-l" id="key-z">z</div>
+          <div class="key ring-l" id="key-x">x</div>
+          <div class="key middle-l" id="key-c">c</div>
+          <div class="key index-l" id="key-v">v</div>
+          <div class="key index-l" id="key-b">b</div>
+          <div class="key index-r" id="key-n">n</div>
+          <div class="key index-r" id="key-m">m</div>
+          <div class="key middle-r" id="key-COMMA">,</div>
+          <div class="key ring-r" id="key-DOT">.</div>
+          <div class="key pinky-r" id="key-SLASH">/</div>
+          <div class="key shift pinky-r" id="key-ShiftRight">Shift</div>
+        </div>
+        <div class="row" id="kb-row-4">
+          <div class="key ctrl pinky-l">Ctrl</div>
+          <div class="key alt ring-l">Alt</div>
+          <div class="key space thumb" id="key-Space"></div>
+          <div class="key alt ring-r">Alt</div>
+          <div class="key ctrl pinky-r">Ctrl</div>
+        </div>
+      </div>
+      <div class="kb-hand-pad"></div>
+      <svg class="kinematic-canvas-layer" id="kb-hand-overlay" xmlns="http://www.w3.org/2000/svg"
+           style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;overflow:visible;">
+        <path id="left-palm" class="hand-base" d="" />
+        <path id="right-palm" class="hand-base" d="" />
+        <path id="path-pinky-l"  class="guide-path" d="" />
+        <path id="path-ring-l"   class="guide-path" d="" />
+        <path id="path-middle-l" class="guide-path" d="" />
+        <path id="path-index-l"  class="guide-path" d="" />
+        <path id="path-thumb-l"  class="guide-path" d="" />
+        <path id="path-thumb-r"  class="guide-path" d="" />
+        <path id="path-index-r"  class="guide-path" d="" />
+        <path id="path-middle-r" class="guide-path" d="" />
+        <path id="path-ring-r"   class="guide-path" d="" />
+        <path id="path-pinky-r"  class="guide-path" d="" />
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ════ RESULT SCREEN ════ -->
+<div id="screen-result" class="screen">
+  <div class="rs-wrap">
+    <div class="rs-header">
+      <div class="rs-emoji" id="rs-emoji">🎉</div>
+      <div class="rs-title" id="rs-title">Exercise Complete!</div>
+      <div class="rs-subtitle" id="rs-subtitle">Here's how you did</div>
+    </div>
+    <div class="rs-cards">
+      <div class="rs-card">
+        <span class="val green" id="rs-wpm">0</span>
+        <span class="lbl">WPM</span>
+      </div>
+      <div class="rs-card">
+        <span class="val accent" id="rs-acc">100%</span>
+        <span class="lbl">Accuracy</span>
+      </div>
+      <div class="rs-card">
+        <span class="val red" id="rs-err">0</span>
+        <span class="lbl">Errors</span>
+      </div>
+      <div class="rs-card">
+        <span class="val amber" id="rs-time">0s</span>
+        <span class="lbl">Time</span>
+      </div>
+    </div>
+    <div class="rs-rank" id="rs-rank">—</div>
+    <div class="rs-mistakes" id="rs-mistakes-panel" style="display:none">
+      <div class="rs-mistakes-title">Characters you missed</div>
+      <div class="rs-mistake-chars" id="rs-mistake-chars"></div>
+    </div>
+    <div class="rs-actions">
+      <div class="rs-left-btns">
+        <button class="btn-rs-retry" onclick="retryFromResult()">↺ Retry</button>
+        <button class="btn-rs-back" onclick="goBack()">← Exercises</button>
+      </div>
+      <button class="btn-rs-next" id="rs-next-btn" onclick="nextExercise()">
+        Next Exercise →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ADMIN SCREEN ════ -->
+<div id="screen-admin" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo"><div class="mark">&lt;/&gt;</div><div class="name">CodeFingers</div></div>
+    <div style="margin-left:12px;font-size:11px;padding:4px 12px;border-radius:20px;background:rgba(240,168,74,0.12);color:var(--amber);border:1px solid rgba(240,168,74,0.3);">👑 Owner Dashboard</div>
+    <div class="topbar-user" style="margin-left:auto;display:flex;gap:10px;">
+      <button class="topbar-btn" onclick="showScreen('home');renderHome();">← Back to App</button>
+      <button class="topbar-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+  <div class="admin-content">
+    <div class="admin-title">Owner Dashboard</div>
+    <div class="admin-sub" id="admin-sub">Logged in as owner</div>
+    <button class="admin-refresh" onclick="renderAdmin()">↺ Refresh Data</button>
+    <div class="admin-stat-grid" id="admin-stats"></div>
+    <div class="admin-section">
+      <h3>All Registered Users</h3>
+      <table class="admin-table" id="admin-user-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Sessions</th><th>Best WPM</th><th>Avg Accuracy</th><th>Snippets Done</th><th>Registered</th></tr></thead>
+        <tbody id="admin-user-tbody"></tbody>
+      </table>
+    </div>
+    <div class="admin-section">
+      <h3>Session Log (Last 50)</h3>
+      <table class="admin-table">
+        <thead><tr><th>User</th><th>Language</th><th>Difficulty</th><th>Snippet</th><th>WPM</th><th>Accuracy</th><th>Errors</th><th>Time</th></tr></thead>
+        <tbody id="admin-session-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════ AUTH POPUP ════ -->
+<div id="auth-popup" onclick="authPopupBgClick(event)">
+  <div class="auth-box">
+    <div id="auth-dismiss-btn" class="auth-dismiss" onclick="dismissAuthPopup()" style="display:none;">×</div>
+    <button class="auth-close-x hidden" id="auth-close-x" onclick="dismissAuthPopup()" title="Close">×</button>
+    <div class="login-logo">
+      <div class="logo-mark">&lt;/&gt;</div>
+      <div class="logo-name">CodeFingers</div>
+    </div>
+    <div class="auth-title" id="auth-title">Create your account</div>
+    <div class="auth-sub" id="auth-sub-text">Register to track your progress</div>
+    <div class="auth-mandatory-note" id="auth-mandatory-note" style="display:none;">🔒 Registration required to save your progress and unlock all exercises.</div>
+    <div class="auth-error" id="auth-error"></div>
+
+    <div id="field-name" class="form-field" style="display:none">
+      <label>Full Name</label>
+      <input type="text" id="input-name" placeholder="Your name"/>
+    </div>
+    <div class="form-field">
+      <label>Email</label>
+      <input type="email" id="input-email" placeholder="you@example.com"/>
+    </div>
+    <div class="form-field">
+      <label>
+        <span>Password</span>
+        <span id="pw-strength-label" style="font-size:10px;color:var(--text3);text-transform:none;letter-spacing:0;"></span>
+      </label>
+      <div class="pw-wrapper">
+        <input type="password" id="input-pass" placeholder="••••••••" oninput="onPwInput()"/>
+        <span class="pw-eye" onclick="togglePw('input-pass','eye1')" id="eye1">👁</span>
+      </div>
+      <div class="pw-strength" id="pw-strength-bar"></div>
+    </div>
+
+    <!-- Confirm password — register only -->
+    <div id="field-confirm" class="form-field" style="display:none">
+      <label>Confirm Password</label>
+      <div class="pw-wrapper">
+        <input type="password" id="input-confirm" placeholder="Re-enter password" oninput="onConfirmInput()"/>
+        <span class="pw-eye" onclick="togglePw('input-confirm','eye2')" id="eye2">👁</span>
+      </div>
+      <div class="confirm-match" id="confirm-match"></div>
+    </div>
+
+    <button class="btn-primary" id="auth-btn" onclick="doAuth()">Create Account</button>
+    <div class="auth-switch"><span id="switch-text">Already have an account?</span> <a onclick="toggleAuthMode()"><span id="switch-link">Sign in</span></a></div>
+  </div>
+</div>
+
+<!-- ════ OWNER SETUP ════ -->
+<div id="owner-setup-popup">
+  <div class="owner-setup-box">
+    <div class="owner-crown">👑</div>
+    <div class="owner-setup-title">Welcome, Owner!</div>
+    <div class="owner-setup-sub">First time setup: create your owner password for <strong style="color:var(--amber)" id="owner-email-label"></strong>.</div>
+    <div class="auth-error" id="owner-setup-error"></div>
+    <div class="form-field"><label>Set Owner Password</label><input type="password" id="owner-pass-input" placeholder="Choose a strong password"/></div>
+    <div class="form-field"><label>Confirm Password</label><input type="password" id="owner-pass-confirm" placeholder="Confirm password"/></div>
+    <button class="btn-primary" style="background:var(--amber);" onclick="setupOwnerPassword()">Set Password & Enter</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+// ════════════════════════════════════════════════
+//  CONFIG
+// ════════════════════════════════════════════════
+// ── Owner config loaded from config.js (never committed to git) ──
+// Fallback values used only if config.js fails to load
+const OWNER_EMAIL = (typeof CF_OWNER_EMAIL !== 'undefined') ? CF_OWNER_EMAIL : '';
+const OWNER_NAME  = (typeof CF_OWNER_NAME  !== 'undefined') ? CF_OWNER_NAME  : 'Owner';
+
+// ════════════════════════════════════════════════
+//  SNIPPETS
+// ════════════════════════════════════════════════
+const SNIPPETS = {
+  python:{
+    easy:[
+      {title:"Hello World",desc:"Print a greeting",chars:85,code:'name = "World"\ngreeting = "Hello, " + name + "!"\nprint(greeting)\nprint("How are you?")\nprint("Goodbye, " + name + "!")'},
+      {title:"Sum of List",desc:"Sum numbers in a list",chars:50,code:'nums = [1, 2, 3, 4, 5]\nprint(sum(nums))'},
+      {title:"For Loop",desc:"Basic iteration",chars:44,code:'for i in range(1, 6):\n    print(i * i)'},
+      {title:"Even Numbers",desc:"Filter even values",chars:62,code:'nums = [1,2,3,4,5,6]\neven = [x for x in nums if x%2==0]\nprint(even)'},
+    ],
+    medium:[
+      {title:"Factorial",desc:"Recursive function",chars:80,code:'def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)\n\nprint(factorial(6))'},
+      {title:"Is Prime",desc:"Prime checker",chars:110,code:'def is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, int(n**0.5)+1):\n        if n % i == 0:\n            return False\n    return True'},
+      {title:"Word Count",desc:"Count words in string",chars:90,code:'def word_count(text):\n    words = text.split()\n    return {w: words.count(w) for w in set(words)}\n\nprint(word_count("hello world hello"))'},
+      {title:"Fibonacci",desc:"Generate fibonacci sequence",chars:82,code:'def fib(n):\n    a, b = 0, 1\n    result = []\n    while a < n:\n        result.append(a)\n        a, b = b, a + b\n    return result'},
+    ],
+    hard:[
+      {title:"Stack Class",desc:"Stack data structure",chars:150,code:'class Stack:\n    def __init__(self):\n        self.items = []\n\n    def push(self, item):\n        self.items.append(item)\n\n    def pop(self):\n        return self.items.pop()\n\n    def peek(self):\n        return self.items[-1]'},
+      {title:"Merge Sort",desc:"Divide and conquer",chars:170,code:'def merge_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    mid = len(arr) // 2\n    left = merge_sort(arr[:mid])\n    right = merge_sort(arr[mid:])\n    return merge(left, right)\n\ndef merge(l, r):\n    result = []\n    i = j = 0\n    while i < len(l) and j < len(r):\n        if l[i] < r[j]:\n            result.append(l[i]); i+=1\n        else:\n            result.append(r[j]); j+=1\n    return result + l[i:] + r[j:]'},
+      {title:"LRU Cache",desc:"Least recently used cache",chars:180,code:'from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, cap):\n        self.cap = cap\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self.cache:\n            return -1\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key, val):\n        self.cache[key] = val\n        self.cache.move_to_end(key)\n        if len(self.cache) > self.cap:\n            self.cache.popitem(last=False)'},
+    ],
+  },
+  javascript:{
+    easy:[
+      {title:"Arrow Function",desc:"ES6 arrow syntax",chars:70,code:'const greet = (name) => {\n  return `Hello, ${name}!`;\n};\nconsole.log(greet("World"));'},
+      {title:"Array Methods",desc:"Filter and map",chars:72,code:'const nums = [1,2,3,4,5];\nconst result = nums\n  .filter(n => n % 2 === 0)\n  .map(n => n * 3);\nconsole.log(result);'},
+      {title:"Template Literal",desc:"String interpolation",chars:60,code:'const a = 10, b = 20;\nconst msg = `Sum of ${a} and ${b} is ${a+b}`;\nconsole.log(msg);'},
+      {title:"Object Destructure",desc:"Destructuring syntax",chars:64,code:'const user = { name: "Alice", age: 25 };\nconst { name, age } = user;\nconsole.log(`${name} is ${age}`);'},
+    ],
+    medium:[
+      {title:"Async Fetch",desc:"Fetch API with async/await",chars:100,code:'async function getData(url) {\n  try {\n    const res = await fetch(url);\n    const data = await res.json();\n    return data;\n  } catch (err) {\n    console.error("Error:", err);\n  }\n}'},
+      {title:"Debounce",desc:"Debounce utility function",chars:110,code:'function debounce(fn, delay) {\n  let timer;\n  return function(...args) {\n    clearTimeout(timer);\n    timer = setTimeout(() => {\n      fn.apply(this, args);\n    }, delay);\n  };\n}'},
+      {title:"Memoize",desc:"Caching function results",chars:120,code:'function memoize(fn) {\n  const cache = new Map();\n  return function(...args) {\n    const key = JSON.stringify(args);\n    if (cache.has(key)) return cache.get(key);\n    const result = fn.apply(this, args);\n    cache.set(key, result);\n    return result;\n  };\n}'},
+    ],
+    hard:[
+      {title:"Event Emitter",desc:"Custom event system",chars:180,code:'class EventEmitter {\n  constructor() {\n    this.events = {};\n  }\n  on(event, listener) {\n    if (!this.events[event]) {\n      this.events[event] = [];\n    }\n    this.events[event].push(listener);\n    return this;\n  }\n  emit(event, ...args) {\n    (this.events[event] || []).forEach(fn => fn(...args));\n    return this;\n  }\n  off(event, listener) {\n    if (this.events[event]) {\n      this.events[event] = this.events[event].filter(fn => fn !== listener);\n    }\n  }\n}'},
+      {title:"Deep Clone",desc:"Deep object cloning",chars:120,code:'function deepClone(obj) {\n  if (obj === null || typeof obj !== "object") return obj;\n  if (Array.isArray(obj)) return obj.map(deepClone);\n  return Object.fromEntries(\n    Object.entries(obj).map(([k, v]) => [k, deepClone(v)])\n  );\n}'},
+    ],
+  },
+  cpp:{
+    easy:[
+      {title:"Hello World",desc:"Basic output",chars:80,code:'#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}'},
+      {title:"Sum of Array",desc:"Array iteration",chars:90,code:'#include <iostream>\nusing namespace std;\n\nint main() {\n    int arr[] = {1,2,3,4,5};\n    int sum = 0;\n    for (int x : arr) sum += x;\n    cout << sum << endl;\n}'},
+      {title:"Swap Variables",desc:"Swap without temp",chars:64,code:'int a = 5, b = 10;\na = a + b;\nb = a - b;\na = a - b;\ncout << a << " " << b;'},
+    ],
+    medium:[
+      {title:"Binary Search",desc:"Search sorted array",chars:130,code:'int binarySearch(vector<int>& arr, int target) {\n    int lo = 0, hi = arr.size() - 1;\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        if (arr[mid] == target) return mid;\n        else if (arr[mid] < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}'},
+      {title:"Reverse String",desc:"In-place reversal",chars:80,code:'#include <algorithm>\n\nstring reverseStr(string s) {\n    int l = 0, r = s.length() - 1;\n    while (l < r) {\n        swap(s[l++], s[r--]);\n    }\n    return s;\n}'},
+    ],
+    hard:[
+      {title:"Template Stack",desc:"Generic stack class",chars:170,code:'template <typename T>\nclass Stack {\n    vector<T> data;\npublic:\n    void push(T val) {\n        data.push_back(val);\n    }\n    T pop() {\n        T v = data.back();\n        data.pop_back();\n        return v;\n    }\n    bool empty() const {\n        return data.empty();\n    }\n};'},
+      {title:"Quicksort",desc:"Recursive quicksort",chars:160,code:'void quicksort(vector<int>& arr, int lo, int hi) {\n    if (lo >= hi) return;\n    int pivot = arr[hi];\n    int i = lo - 1;\n    for (int j = lo; j < hi; j++) {\n        if (arr[j] <= pivot) {\n            swap(arr[++i], arr[j]);\n        }\n    }\n    swap(arr[++i], arr[hi]);\n    quicksort(arr, lo, i - 1);\n    quicksort(arr, i + 1, hi);\n}'},
+    ],
+  },
+  rust:{
+    easy:[
+      {title:"Hello World",desc:"Basic Rust output",chars:50,code:'fn main() {\n    let name = "World";\n    println!("Hello, {}!", name);\n}'},
+      {title:"Variables",desc:"Mutability and types",chars:60,code:'fn main() {\n    let mut x: i32 = 10;\n    x += 5;\n    println!("x = {}", x);\n}'},
+      {title:"Vectors",desc:"Basic vector ops",chars:72,code:'fn main() {\n    let mut v = vec![1, 2, 3];\n    v.push(4);\n    let sum: i32 = v.iter().sum();\n    println!("{}", sum);\n}'},
+    ],
+    medium:[
+      {title:"Word Count",desc:"HashMap usage",chars:110,code:'use std::collections::HashMap;\n\nfn word_count(s: &str) -> HashMap<&str, usize> {\n    let mut map = HashMap::new();\n    for w in s.split_whitespace() {\n        *map.entry(w).or_insert(0) += 1;\n    }\n    map\n}'},
+      {title:"Filter & Map",desc:"Iterator chaining",chars:80,code:'fn main() {\n    let nums = vec![1, 2, 3, 4, 5, 6];\n    let result: Vec<i32> = nums.iter()\n        .filter(|&&x| x % 2 == 0)\n        .map(|&x| x * x)\n        .collect();\n    println!("{:?}", result);\n}'},
+    ],
+    hard:[
+      {title:"Generic Stack",desc:"Generics and traits",chars:150,code:'struct Stack<T> {\n    data: Vec<T>,\n}\n\nimpl<T> Stack<T> {\n    fn new() -> Self {\n        Stack { data: Vec::new() }\n    }\n    fn push(&mut self, val: T) {\n        self.data.push(val);\n    }\n    fn pop(&mut self) -> Option<T> {\n        self.data.pop()\n    }\n    fn is_empty(&self) -> bool {\n        self.data.is_empty()\n    }\n}'},
+    ],
+  },
+  java:{
+    easy:[
+      {title:"Hello World",desc:"Basic Java program",chars:80,code:'public class Main {\n    public static void main(String[] args) {\n        String name = "World";\n        System.out.println("Hello, " + name + "!");\n    }\n}'},
+      {title:"For Each Loop",desc:"Array iteration",chars:80,code:'int[] nums = {1, 2, 3, 4, 5};\nint sum = 0;\nfor (int n : nums) {\n    sum += n;\n}\nSystem.out.println("Sum: " + sum);'},
+      {title:"String Methods",desc:"Common string ops",chars:70,code:'String s = "  Hello World  ";\nSystem.out.println(s.trim());\nSystem.out.println(s.toLowerCase());\nSystem.out.println(s.replace("World","Java"));'},
+    ],
+    medium:[
+      {title:"Binary Search",desc:"Iterative search",chars:120,code:'public static int binarySearch(int[] arr, int target) {\n    int lo = 0, hi = arr.length - 1;\n    while (lo <= hi) {\n        int mid = (lo + hi) / 2;\n        if (arr[mid] == target) return mid;\n        if (arr[mid] < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}'},
+      {title:"Generic Stack",desc:"Java generics",chars:130,code:'import java.util.LinkedList;\n\npublic class Stack<T> {\n    private LinkedList<T> list = new LinkedList<>();\n    public void push(T item) { list.push(item); }\n    public T pop() { return list.pop(); }\n    public T peek() { return list.peek(); }\n    public boolean isEmpty() { return list.isEmpty(); }\n}'},
+    ],
+    hard:[
+      {title:"Builder Pattern",desc:"Fluent builder",chars:150,code:'public class User {\n    private final String name;\n    private final String email;\n    private final int age;\n\n    private User(Builder b) {\n        this.name = b.name;\n        this.email = b.email;\n        this.age = b.age;\n    }\n\n    public static class Builder {\n        private String name;\n        private String email;\n        private int age;\n        public Builder name(String n) { this.name = n; return this; }\n        public Builder email(String e) { this.email = e; return this; }\n        public Builder age(int a) { this.age = a; return this; }\n        public User build() { return new User(this); }\n    }\n}'},
+    ],
+  },
+  go:{
+    easy:[
+      {title:"Hello World",desc:"Basic Go program",chars:60,code:'package main\nimport "fmt"\n\nfunc main() {\n    name := "World"\n    fmt.Printf("Hello, %s!\\n", name)\n}'},
+      {title:"Slices",desc:"Working with slices",chars:72,code:'package main\nimport "fmt"\n\nfunc main() {\n    nums := []int{1,2,3,4,5}\n    sum := 0\n    for _, v := range nums {\n        sum += v\n    }\n    fmt.Println(sum)\n}'},
+      {title:"Maps",desc:"Go map usage",chars:80,code:'package main\nimport "fmt"\n\nfunc main() {\n    scores := map[string]int{\n        "Alice": 95,\n        "Bob":   87,\n    }\n    fmt.Println(scores["Alice"])\n}'},
+    ],
+    medium:[
+      {title:"Goroutine",desc:"Concurrent execution",chars:110,code:'package main\nimport (\n    "fmt"\n    "sync"\n)\n\nfunc main() {\n    var wg sync.WaitGroup\n    for i := 0; i < 5; i++ {\n        wg.Add(1)\n        go func(n int) {\n            defer wg.Done()\n            fmt.Println(n)\n        }(i)\n    }\n    wg.Wait()\n}'},
+      {title:"Interface",desc:"Go interfaces",chars:110,code:'type Shape interface {\n    Area() float64\n}\n\ntype Circle struct {\n    Radius float64\n}\n\nfunc (c Circle) Area() float64 {\n    return 3.14159 * c.Radius * c.Radius\n}\n\nfunc printArea(s Shape) {\n    fmt.Printf("Area: %.2f\\n", s.Area())\n}'},
+    ],
+    hard:[
+      {title:"Generic Stack",desc:"Go generics",chars:130,code:'type Stack[T any] struct {\n    items []T\n}\n\nfunc (s *Stack[T]) Push(v T) {\n    s.items = append(s.items, v)\n}\n\nfunc (s *Stack[T]) Pop() (T, bool) {\n    if len(s.items) == 0 {\n        var zero T\n        return zero, false\n    }\n    n := len(s.items) - 1\n    v := s.items[n]\n    s.items = s.items[:n]\n    return v, true\n}'},
+    ],
+  },
+  typescript:{
+    easy:[
+      {title:"Type Annotations",desc:"Basic TS types",chars:70,code:'function greet(name: string, age: number): string {\n    return `Hello ${name}, you are ${age} years old`;\n}\n\nconsole.log(greet("Alice", 25));'},
+      {title:"Interface",desc:"Define a type contract",chars:80,code:'interface User {\n    id: number;\n    name: string;\n    email: string;\n}\n\nconst user: User = {\n    id: 1,\n    name: "Alice",\n    email: "alice@example.com",\n};'},
+      {title:"Enum",desc:"Enumerations in TS",chars:60,code:'enum Direction {\n    Up = "UP",\n    Down = "DOWN",\n    Left = "LEFT",\n    Right = "RIGHT",\n}\n\nconst move = Direction.Up;\nconsole.log(move);'},
+    ],
+    medium:[
+      {title:"Generic Function",desc:"Type-safe generics",chars:90,code:'function identity<T>(arg: T): T {\n    return arg;\n}\n\nfunction first<T>(arr: T[]): T | undefined {\n    return arr[0];\n}\n\nconsole.log(first([1, 2, 3]));\nconsole.log(first(["a", "b"]));'},
+      {title:"Type Guards",desc:"Narrowing with guards",chars:100,code:'type Cat = { meow(): void };\ntype Dog = { bark(): void };\n\nfunction isCat(pet: Cat | Dog): pet is Cat {\n    return (pet as Cat).meow !== undefined;\n}\n\nfunction makeNoise(pet: Cat | Dog) {\n    if (isCat(pet)) pet.meow();\n    else pet.bark();\n}'},
+    ],
+    hard:[
+      {title:"Mapped Types",desc:"Advanced type mapping",chars:110,code:'type Optional<T> = {\n    [K in keyof T]?: T[K];\n};\n\ntype Nullable<T> = {\n    [K in keyof T]: T[K] | null;\n};\n\ntype Getters<T> = {\n    [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K];\n};'},
+    ],
+  },
+  sql:{
+    easy:[
+      {title:"SELECT Query",desc:"Basic data retrieval",chars:60,code:'SELECT id, name, email\nFROM users\nWHERE active = 1\nORDER BY name ASC;'},
+      {title:"INSERT Row",desc:"Adding new data",chars:70,code:'INSERT INTO users (name, email, created_at)\nVALUES\n    ("Alice", "alice@example.com", NOW()),\n    ("Bob",   "bob@example.com",   NOW());'},
+      {title:"UPDATE Records",desc:"Modifying existing data",chars:60,code:'UPDATE products\nSET\n    price = price * 0.9,\n    updated_at = NOW()\nWHERE category = "clearance"\n  AND stock > 0;'},
+    ],
+    medium:[
+      {title:"JOIN Query",desc:"Multi-table join",chars:110,code:'SELECT\n    u.name,\n    COUNT(o.id) AS order_count,\n    SUM(o.total) AS total_spent\nFROM users u\nINNER JOIN orders o ON u.id = o.user_id\nWHERE o.status = "completed"\nGROUP BY u.name\nHAVING COUNT(o.id) > 2\nORDER BY total_spent DESC;'},
+      {title:"Window Function",desc:"Ranking with OVER",chars:100,code:'SELECT\n    name,\n    department,\n    salary,\n    RANK() OVER (\n        PARTITION BY department\n        ORDER BY salary DESC\n    ) AS dept_rank\nFROM employees;'},
+    ],
+    hard:[
+      {title:"CTE Recursion",desc:"Recursive CTE",chars:150,code:'WITH RECURSIVE hierarchy AS (\n    SELECT id, name, manager_id, 0 AS level\n    FROM employees\n    WHERE manager_id IS NULL\n\n    UNION ALL\n\n    SELECT e.id, e.name, e.manager_id, h.level + 1\n    FROM employees e\n    JOIN hierarchy h ON e.manager_id = h.id\n)\nSELECT name, level\nFROM hierarchy\nORDER BY level, name;'},
+    ],
+  },
+  bash:{
+    easy:[
+      {title:"Variables",desc:"Bash variable basics",chars:60,code:'#!/bin/bash\nNAME="CodeFingers"\nVERSION="1.0"\necho "Welcome to $NAME v$VERSION"\necho "Today is $(date +%Y-%m-%d)"'},
+      {title:"If Condition",desc:"Conditional logic",chars:80,code:'#!/bin/bash\nFILE="config.txt"\n\nif [ -f "$FILE" ]; then\n    echo "Config found"\n    source "$FILE"\nelse\n    echo "No config, using defaults"\nfi'},
+      {title:"For Loop",desc:"Iterate over items",chars:70,code:'#!/bin/bash\nfor lang in Python JavaScript Rust Go; do\n    echo "Language: $lang"\ndone\n\nfor i in {1..5}; do\n    echo "Count: $i"\ndone'},
+    ],
+    medium:[
+      {title:"Function",desc:"Reusable bash function",chars:110,code:'#!/bin/bash\n\nlog() {\n    local level=$1\n    shift\n    echo "[$(date +%H:%M:%S)] [$level] $*"\n}\n\nbackup() {\n    local src=$1\n    local dest="${2:-./backup}"\n    mkdir -p "$dest"\n    cp -r "$src" "$dest/"\n    log "INFO" "Backed up $src to $dest"\n}'},
+      {title:"Parse Arguments",desc:"Argument handling",chars:100,code:'#!/bin/bash\nFILE=""\nVERBOSE=0\n\nwhile getopts "f:v" opt; do\n    case $opt in\n        f) FILE="$OPTARG" ;;\n        v) VERBOSE=1 ;;\n        *) echo "Usage: $0 [-f file] [-v]"; exit 1 ;;\n    esac\ndone\n\n[ -z "$FILE" ] && { echo "File required"; exit 1; }'},
+    ],
+    hard:[
+      {title:"Retry Function",desc:"Retry with backoff",chars:130,code:'#!/bin/bash\n\nretry() {\n    local attempts=$1\n    local delay=$2\n    shift 2\n    local count=0\n\n    while [ $count -lt $attempts ]; do\n        "$@" && return 0\n        count=$((count + 1))\n        echo "Attempt $count failed. Retrying in ${delay}s..."\n        sleep $delay\n        delay=$((delay * 2))\n    done\n    echo "All $attempts attempts failed."\n    return 1\n}'},
+    ],
+  },
+  kotlin:{
+    easy:[
+      {title:"Hello World",desc:"Basic Kotlin program",chars:55,code:'fun main() {\n    val name = "World"\n    println("Hello, $name!")\n}'},
+      {title:"Data Class",desc:"Kotlin data classes",chars:70,code:'data class User(\n    val id: Int,\n    val name: String,\n    val email: String\n)\n\nval user = User(1, "Alice", "alice@example.com")\nprintln(user)'},
+      {title:"When Expression",desc:"Pattern matching",chars:70,code:'fun describe(x: Int): String = when {\n    x < 0  -> "negative"\n    x == 0 -> "zero"\n    x < 10 -> "small"\n    else   -> "large"\n}\n\nprintln(describe(7))'},
+    ],
+    medium:[
+      {title:"Extension Function",desc:"Extend existing types",chars:90,code:'fun String.isPalindrome(): Boolean {\n    return this == this.reversed()\n}\n\nfun List<Int>.second(): Int? {\n    return if (size >= 2) this[1] else null\n}\n\nprintln("racecar".isPalindrome())\nprintln(listOf(1, 2, 3).second())'},
+      {title:"Sealed Class",desc:"Type-safe hierarchy",chars:100,code:'sealed class Result<out T> {\n    data class Success<T>(val data: T) : Result<T>()\n    data class Error(val message: String) : Result<Nothing>()\n    object Loading : Result<Nothing>()\n}\n\nfun handle(r: Result<String>) = when (r) {\n    is Result.Success -> println(r.data)\n    is Result.Error   -> println("Err: ${r.message}")\n    is Result.Loading -> println("Loading...")\n}'},
+    ],
+    hard:[
+      {title:"Generic Repository",desc:"Repository pattern",chars:150,code:'interface Repository<T, ID> {\n    fun findById(id: ID): T?\n    fun findAll(): List<T>\n    fun save(entity: T): T\n    fun delete(id: ID): Boolean\n}\n\nclass InMemoryRepo<T : Any, ID : Any>(\n    private val store: MutableMap<ID, T> = mutableMapOf(),\n    private val getId: (T) -> ID\n) : Repository<T, ID> {\n    override fun findById(id: ID) = store[id]\n    override fun findAll() = store.values.toList()\n    override fun save(e: T) = e.also { store[getId(e)] = e }\n    override fun delete(id: ID) = store.remove(id) != null\n}'},
+    ],
+  },
+};
+
+const LANG_ICONS = {python:'py',javascript:'js',cpp:'cpp',rust:'rs',java:'java',go:'go',typescript:'ts',sql:'sql',bash:'bash',kotlin:'kt'};
+const LANG_EXTS  = {python:'main.py',javascript:'main.js',cpp:'main.cpp',rust:'main.rs',java:'Main.java',go:'main.go',typescript:'main.ts',sql:'query.sql',bash:'script.sh',kotlin:'Main.kt'};
+
+// ════════════════════════════════════════════════
+//  DB (localStorage)
+// ════════════════════════════════════════════════
+function getDB(){ try{ return JSON.parse(localStorage.getItem('codefingers_db')||'{}'); }catch(e){ return {}; } }
+function saveDB(db){ localStorage.setItem('codefingers_db', JSON.stringify(db)); }
+function initDB(){
+  const db = getDB();
+  if(!db.users) db.users = {};
+  if(!db.session_log) db.session_log = [];
+  if(db.owner_pass === undefined) db.owner_pass = null;
+  saveDB(db); return db;
+}
+function simpleHash(str){
+  let h=0;
+  for(let i=0;i<str.length;i++){ h=(Math.imul(31,h)+str.charCodeAt(i))|0; }
+  return h.toString(36);
+}
+
+// ════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════
+let currentUser = null;
+let currentProgress = {};
+let authMode = 'register';
+let authPopupDismissable = true;
+
+// ════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════
+function init(){
+  initDB();
+  document.getElementById('owner-email-label').textContent = OWNER_EMAIL;
+  const sessionEmail = localStorage.getItem('codefingers_session');
+  if(sessionEmail){
+    const db = getDB();
+    if(sessionEmail === OWNER_EMAIL && db.owner_pass){
+      loginUser(OWNER_EMAIL, {name:OWNER_NAME,isOwner:true,progress:{sessions:0,bestWpm:0,totalAcc:0,accCount:0,snippetsDone:[]}});
+      return;
+    }
+    if(db.users && db.users[sessionEmail]){
+      loginUser(sessionEmail, db.users[sessionEmail]);
+      return;
+    }
+  }
+  // No session → show landing page
+  showScreen('landing');
+}
+
+function enterApp(){
+  // Called from landing page "Get Started" button
+  currentUser = null; currentProgress = {};
+  renderTopbar();
+  document.getElementById('trial-banner').style.display='flex';
+  document.getElementById('progress-strip').style.display='none';
+  showScreen('home');
+}
+
+function enterGuestMode(){
+  currentUser = null; currentProgress = {};
+  renderTopbar();
+  document.getElementById('trial-banner').style.display='flex';
+  document.getElementById('progress-strip').style.display='none';
+  showScreen('home');
+}
+
+// ════════════════════════════════════════════════
+//  TOPBAR
+// ════════════════════════════════════════════════
+function renderTopbar(){
+  const area = document.getElementById('topbar-user-area');
+  if(!currentUser){
+    area.innerHTML=`<span class="guest-badge">Guest Mode</span><button class="topbar-btn" onclick="openAuthPopup('register')">Register</button><button class="topbar-btn" onclick="openAuthPopup('login')">Sign In</button>`;
+  } else if(currentUser.isOwner){
+    area.innerHTML=`<div class="user-pill"><div class="user-avatar">👑</div><span>${OWNER_NAME}</span></div><button class="topbar-btn owner" onclick="showScreen('admin');renderAdmin();">Admin Panel</button><button class="topbar-btn" onclick="signOut()">Sign out</button>`;
+  } else {
+    const n=currentUser.name;
+    area.innerHTML=`<div class="user-pill"><div class="user-avatar">${n.charAt(0).toUpperCase()}</div><span>${n}</span></div><button class="topbar-btn" onclick="signOut()">Sign out</button>`;
+  }
+}
+
+// ════════════════════════════════════════════════
+//  AUTH — password helpers
+// ════════════════════════════════════════════════
+function togglePw(inputId, eyeId){
+  const inp = document.getElementById(inputId);
+  inp.type = inp.type==='password' ? 'text' : 'password';
+  document.getElementById(eyeId).textContent = inp.type==='password' ? '👁' : '🙈';
+}
+
+function pwScore(pw){
+  let s=0;
+  if(pw.length>=6) s++;
+  if(pw.length>=10) s++;
+  if(/[A-Z]/.test(pw)) s++;
+  if(/[0-9!@#$%^&*]/.test(pw)) s++;
+  return s;
+}
+
+function onPwInput(){
+  const pw = document.getElementById('input-pass').value;
+  const bar = document.getElementById('pw-strength-bar');
+  const lbl = document.getElementById('pw-strength-label');
+  if(!pw){ bar.className='pw-strength'; lbl.textContent=''; return; }
+  const s = pwScore(pw);
+  const labels = ['','Weak','Fair','Good','Strong'];
+  const cls    = ['','s1','s2','s3','s4'];
+  bar.className = 'pw-strength ' + cls[s];
+  lbl.textContent = labels[s];
+  lbl.style.color = ['','var(--red)','var(--amber)','var(--accent)','var(--green)'][s];
+  if(authMode==='register') onConfirmInput();
+}
+
+function onConfirmInput(){
+  const pw  = document.getElementById('input-pass').value;
+  const cf  = document.getElementById('input-confirm').value;
+  const div = document.getElementById('confirm-match');
+  const inp = document.getElementById('input-confirm');
+  if(!cf){ div.textContent=''; inp.className=''; return; }
+  if(pw===cf){
+    div.textContent='✓ Passwords match'; div.className='confirm-match ok';
+    inp.classList.add('valid'); inp.classList.remove('invalid');
+  } else {
+    div.textContent='✗ Passwords do not match'; div.className='confirm-match no';
+    inp.classList.add('invalid'); inp.classList.remove('valid');
+  }
+}
+
+// ════════════════════════════════════════════════
+//  AUTH POPUP
+// ════════════════════════════════════════════════
+function openAuthPopup(mode, dismissable=true){
+  authMode=mode; authPopupDismissable=dismissable;
+  document.getElementById('auth-error').classList.remove('show');
+  document.getElementById('auth-dismiss-btn').style.display = dismissable?'flex':'none';
+  document.getElementById('auth-mandatory-note').style.display = (!dismissable&&mode==='register')?'block':'none';
+  // Show/hide the X close button
+  const xBtn = document.getElementById('auth-close-x');
+  if(xBtn){ xBtn.classList.toggle('hidden', !dismissable); }
+
+  const isReg = mode==='register';
+  document.getElementById('auth-title').textContent = isReg?'Create your account':'Welcome back';
+  document.getElementById('auth-sub-text').textContent = isReg?'Register to track your progress':'Sign in to continue your progress';
+  document.getElementById('auth-btn').textContent = isReg?'Create Account':'Sign In';
+  document.getElementById('switch-text').textContent = isReg?'Already have an account?':"Don't have an account?";
+  document.getElementById('switch-link').textContent = isReg?'Sign in':'Create one';
+  document.getElementById('field-name').style.display = isReg?'block':'none';
+  document.getElementById('field-confirm').style.display = isReg?'block':'none';
+  document.getElementById('pw-strength-bar').className = 'pw-strength';
+  document.getElementById('pw-strength-label').textContent = '';
+  document.getElementById('confirm-match').textContent = '';
+  ['input-name','input-email','input-pass','input-confirm'].forEach(id=>{
+    const el=document.getElementById(id); if(el){el.value='';el.className='';}
+  });
+  document.getElementById('auth-popup').classList.add('open');
+}
+
+function dismissAuthPopup(){ if(authPopupDismissable) document.getElementById('auth-popup').classList.remove('open'); }
+function authPopupBgClick(e){ if(e.target===document.getElementById('auth-popup')&&authPopupDismissable) dismissAuthPopup(); }
+function toggleAuthMode(){ openAuthPopup(authMode==='register'?'login':'register', authPopupDismissable); }
+function showAuthError(msg){ const el=document.getElementById('auth-error'); el.textContent=msg; el.classList.add('show'); }
+
+function doAuth(){
+  const email = document.getElementById('input-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('input-pass').value;
+  if(!email||!pass){ showAuthError('Please fill in all fields.'); return; }
+  const db = initDB();
+
+  if(email===OWNER_EMAIL){
+    if(authMode==='register'){ showAuthError('This email is reserved. Please sign in instead.'); return; }
+    if(!db.owner_pass){ document.getElementById('auth-popup').classList.remove('open'); document.getElementById('owner-setup-popup').classList.add('open'); return; }
+    if(db.owner_pass!==simpleHash(pass)){ showAuthError('Incorrect owner password.'); return; }
+    localStorage.setItem('codefingers_session',OWNER_EMAIL);
+    document.getElementById('auth-popup').classList.remove('open');
+    loginUser(OWNER_EMAIL,{name:OWNER_NAME,isOwner:true,progress:{sessions:0,bestWpm:0,totalAcc:0,accCount:0,snippetsDone:[]}});
+    return;
+  }
+
+  if(authMode==='register'){
+    const name=document.getElementById('input-name').value.trim();
+    const confirm=document.getElementById('input-confirm').value;
+    if(!name){ showAuthError('Please enter your name.'); return; }
+    if(pass!==confirm){ showAuthError('Passwords do not match.'); return; }
+    if(pass.length<6){ showAuthError('Password must be at least 6 characters.'); return; }
+    if(db.users[email]){ showAuthError('An account with this email already exists.'); return; }
+    db.users[email]={name,pass:simpleHash(pass),registeredAt:new Date().toISOString(),progress:{sessions:0,bestWpm:0,totalAcc:0,accCount:0,snippetsDone:[]},sessions:[]};
+    saveDB(db);
+    localStorage.setItem('codefingers_session',email);
+    document.getElementById('auth-popup').classList.remove('open');
+    loginUser(email,db.users[email]);
+  } else {
+    if(!db.users[email]){ showAuthError('No account found with this email.'); return; }
+    if(db.users[email].pass!==simpleHash(pass)){ showAuthError('Incorrect password.'); return; }
+    localStorage.setItem('codefingers_session',email);
+    document.getElementById('auth-popup').classList.remove('open');
+    loginUser(email,db.users[email]);
+  }
+}
+
+function setupOwnerPassword(){
+  const p1=document.getElementById('owner-pass-input').value;
+  const p2=document.getElementById('owner-pass-confirm').value;
+  const err=document.getElementById('owner-setup-error');
+  err.classList.remove('show');
+  if(!p1||p1.length<6){ err.textContent='Password must be at least 6 characters.'; err.classList.add('show'); return; }
+  if(p1!==p2){ err.textContent='Passwords do not match.'; err.classList.add('show'); return; }
+  const db=initDB(); db.owner_pass=simpleHash(p1); saveDB(db);
+  localStorage.setItem('codefingers_session',OWNER_EMAIL);
+  document.getElementById('owner-setup-popup').classList.remove('open');
+  loginUser(OWNER_EMAIL,{name:OWNER_NAME,isOwner:true,progress:{sessions:0,bestWpm:0,totalAcc:0,accCount:0,snippetsDone:[]}});
+}
+
+function loginUser(email,data){
+  currentUser={email,...data};
+  currentProgress = currentUser.isOwner?{}:(currentUser.progress||{});
+  renderTopbar();
+  if(currentUser.isOwner){ showScreen('admin'); renderAdmin(); }
+  else if(document.getElementById('screen-result').classList.contains('active')){
+    // User just registered/logged in via Next button → load next exercise
+    dismissAuthPopup();
+    const db = loadDB();
+    const snips = (db.snippets||{})[tyState.lang]?.[tyState.diff] || [];
+    const nextIdx = (tyState.snippetIdx + 1) % snips.length;
+    startTyping(tyState.lang, tyState.diff, nextIdx);
+  }
+  else { document.getElementById('trial-banner').style.display='none'; document.getElementById('progress-strip').style.display=''; renderHome(); showScreen('home'); }
+}
+
+function signOut(){
+  localStorage.removeItem('codefingers_session');
+  currentUser=null; currentProgress={};
+  showScreen('landing');
+}
+
+function saveProgress(){
+  if(!currentUser||currentUser.isOwner) return;
+  const db=getDB();
+  if(db.users&&db.users[currentUser.email]){ db.users[currentUser.email].progress=currentProgress; saveDB(db); }
+}
+
+function logSession(wpm,acc,errors,elapsed){
+  if(!currentUser||currentUser.isOwner) return;
+  const db=getDB();
+  if(!db.session_log) db.session_log=[];
+  db.session_log.push({email:currentUser.email,lang:tyState.lang,diff:tyState.diff,snippetIdx:tyState.snippetIdx,snippetTitle:tyState.title,wpm,acc,errors,elapsed,at:new Date().toISOString()});
+  if(db.session_log.length>500) db.session_log=db.session_log.slice(-500);
+  saveDB(db);
+}
+
+// ════════════════════════════════════════════════
+//  HOME
+// ════════════════════════════════════════════════
+function renderHome(){
+  if(!currentUser) return;
+  const p=currentProgress;
+  document.getElementById('stat-sessions').textContent=p.sessions||0;
+  document.getElementById('stat-bestwpm').textContent=p.bestWpm||0;
+  document.getElementById('stat-avgacc').textContent=p.accCount?Math.round(p.totalAcc/p.accCount)+'%':'—';
+  document.getElementById('stat-snips').textContent=(p.snippetsDone||[]).length;
+}
+
+// ════════════════════════════════════════════════
+//  SNIPPET MODAL
+// ════════════════════════════════════════════════
+let currentLang='', currentDiff='easy';
+
+function openLang(lang){
+  currentLang=lang; currentDiff='easy';
+  document.getElementById('modal-title').textContent=lang.charAt(0).toUpperCase()+lang.slice(1);
+  const icon=document.getElementById('modal-icon');
+  icon.className='modal-lang-icon '+LANG_ICONS[lang];
+  const lc=document.querySelector(`.lang-card[onclick="openLang('${lang}')"] .lang-icon`); if(lc) icon.textContent=lc.textContent;
+  document.querySelectorAll('.diff-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.diff-tab').classList.add('active');
+  renderSnippetList();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(e){ if(e.target===document.getElementById('modal-overlay')) closeModalDirect(); }
+function closeModalDirect(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function switchDiff(btn,diff){ currentDiff=diff; document.querySelectorAll('.diff-tab').forEach(t=>t.classList.remove('active')); btn.classList.add('active'); renderSnippetList(); }
+
+function renderSnippetList(){
+  const list=document.getElementById('snippet-list');
+  const pool=SNIPPETS[currentLang]?.[currentDiff]||[];
+  const done=currentProgress.snippetsDone||[];
+  const guest=!currentUser;
+  list.innerHTML=pool.map((s,i)=>{
+    const key=`${currentLang}_${currentDiff}_${i}`;
+    const isDone=done.includes(key);
+    const isFree=(currentDiff==='easy'&&i===0);
+    const isLocked=guest&&!isFree;
+    let cls='snippet-item'+(isDone?' done':'')+(isLocked?' locked':'')+(guest&&isFree?' trial-free':'');
+    const click=isLocked?`onclick="openAuthPopup('register',true)"`:`onclick="startTyping('${currentLang}','${currentDiff}',${i})"`;
+    const right=isLocked?`<span class="snip-lock">🔒</span>`:isDone?`<span class="snip-badge">Done ✓</span><span class="snip-arrow">›</span>`:(guest&&isFree)?`<span class="snip-trial-badge">Free Trial</span><span class="snip-arrow">›</span>`:`<span class="snip-arrow">›</span>`;
+    return `<div class="${cls}" ${click}><div class="snip-num">${String(i+1).padStart(2,'0')}</div><div class="snip-info"><div class="snip-title">${s.title}${isLocked?' <span style="color:var(--text3);font-size:10px;">(register to unlock)</span>':''}</div><div class="snip-meta">${s.desc} · ~${s.chars} chars</div></div>${right}</div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════
+//  KEYBOARD LAYOUT
+// ════════════════════════════════════════════════
+const KB_ROWS = [
+  ['`','1','2','3','4','5','6','7','8','9','0','-','=','⌫'],
+  ['Tab','q','w','e','r','t','y','u','i','o','p','[',']','\\'],
+  ['Caps','a','s','d','f','g','h','j','k','l',';',"'",'↵'],
+  ['Shift','z','x','c','v','b','n','m',',','.','/','Shift'],
+  ['Ctrl','Alt','Space','Alt','Ctrl']
+];
+const KB_WIDE = {Tab:'wide-15','⌫':'wide-15',Caps:'wide-18','↵':'wide-18',Shift:'wide-20',Ctrl:'wide-15',Alt:'wide-15',Space:'wide-space'};
+
+// finger map: which finger types each key (0=L-pinky,1=L-ring,2=L-middle,3=L-index,4=L-index,5=R-index,6=R-index,7=R-middle,8=R-ring,9=R-pinky)
+const FINGER_MAP = {
+  '`':0,'1':0,'2':1,'3':2,'4':3,'5':3,'6':6,'7':6,'8':7,'9':8,'0':9,'-':9,'=':9,'⌫':9,
+  'Tab':0,'q':0,'w':1,'e':2,'r':3,'t':3,'y':6,'u':6,'i':7,'o':8,'p':9,'[':9,']':9,'\\':9,
+  'Caps':0,'a':0,'s':1,'d':2,'f':3,'g':3,'h':6,'j':6,'k':7,'l':8,';':9,"'":9,'↵':9,
+  'Shift':0,'z':0,'x':1,'c':2,'v':3,'b':3,'n':6,'m':6,',':7,'.':8,'/':9,
+  'Ctrl':0,'Alt':0,'Space':5,'Alt2':6,'Ctrl2':9
+};
+// Finger index → SVG element id
+const FINGER_SVG_ID = {0:'fl0',1:'fl1',2:'fl2',3:'fl3',4:'fl4',5:'fr5',6:'fr6',7:'fr7',8:'fr8',9:'fr9'};
+// Finger colors matching the guide legend
+const FINGER_COLORS = {0:'#e05c6a',1:'#f0a84a',2:'#4eca8b',3:'#5b8dee',4:'#5b8dee',5:'#9b7fe8',6:'#9b7fe8',7:'#3dc9c9',8:'#f0a84a',9:'#e05c6a'};
+// left fingers: 0-4, right: 5-9
+// hand SVG path ids
+const HAND_L_FINGERS = {0:'fl0',1:'fl1',2:'fl2',3:'fl3',4:'fl4'};
+const HAND_R_FINGERS = {5:'fr5',6:'fr6',7:'fr7',8:'fr8',9:'fr9'};
+
+function buildKeyboard(){
+  const legend = document.getElementById('kb-guide-legend');
+  if(legend){
+    legend.innerHTML = `
+      <span class="kfg-item"><span class="kfg-dot" style="background:#ff5964"></span>Pinky</span>
+      <span class="kfg-item"><span class="kfg-dot" style="background:#ff9015"></span>Ring</span>
+      <span class="kfg-item"><span class="kfg-dot" style="background:#fee440"></span>Middle</span>
+      <span class="kfg-item"><span class="kfg-dot" style="background:#00bbf9"></span>Index</span>
+      <span class="kfg-item"><span class="kfg-dot" style="background:#00f5d4"></span>R.Index</span>
+      <span class="kfg-item"><span class="kfg-dot" style="background:#9b5de5"></span>R.Middle</span>
+      <span class="kfg-item"><span class="kfg-dot" style="background:#f15bb5"></span>R.Ring</span>
+      <span class="kfg-item"><span class="kfg-dot" style="background:#00f5d4"></span>R.Pinky</span>`;
+  }
+  buildHandOverlay();
+}
+
+// ══════════════════════════════════════
+//  KEYUP.HTML KINEMATIC SYSTEM (exact)
+// ══════════════════════════════════════
+
+const designColors = {
+  'pinky-l':'#ff5964','ring-l':'#ff9015','middle-l':'#fee440','index-l':'#00bbf9',
+  'thumb-l':'#a8dadc','thumb-r':'#a8dadc',
+  'index-r':'#00f5d4','middle-r':'#9b5de5','ring-r':'#f15bb5','pinky-r':'#00f5d4'
+};
+
+// Exact fingerMap from keyup.html (handles uppercase too for shift chars)
+const fingerMap = {
+  '`':'pinky-l','1':'pinky-l','q':'pinky-l','Q':'pinky-l','a':'pinky-l','A':'pinky-l','z':'pinky-l','Z':'pinky-l','!':'pinky-l',
+  '2':'ring-l','w':'ring-l','W':'ring-l','s':'ring-l','S':'ring-l','x':'ring-l','X':'ring-l','@':'ring-l',
+  '3':'middle-l','e':'middle-l','E':'middle-l','d':'middle-l','D':'middle-l','c':'middle-l','C':'middle-l','#':'middle-l',
+  '4':'index-l','5':'index-l','r':'index-l','R':'index-l','t':'index-l','T':'index-l','f':'index-l','F':'index-l','g':'index-l','G':'index-l','v':'index-l','V':'index-l','b':'index-l','B':'index-l','$':'index-l','%':'index-l',
+  ' ':'thumb-l',
+  '6':'index-r','7':'index-r','y':'index-r','Y':'index-r','u':'index-r','U':'index-r','h':'index-r','H':'index-r','j':'index-r','J':'index-r','n':'index-r','N':'index-r','m':'index-r','M':'index-r','^':'index-r','&':'index-r',
+  '8':'middle-r','i':'middle-r','I':'middle-r','k':'middle-r','K':'middle-r',',':'middle-r','<':'middle-r','*':'middle-r',
+  '9':'ring-r','o':'ring-r','O':'ring-r','l':'ring-r','L':'ring-r','.':'ring-r','>':'ring-r','(':'ring-r',
+  '0':'pinky-r','-':'pinky-r','=':'pinky-r','p':'pinky-r','P':'pinky-r','[':'pinky-r',']':'pinky-r',';':'pinky-r',':':'pinky-r',"'":'pinky-r','"':'pinky-r','\\':'pinky-r','|':'pinky-r','/':'pinky-r','?':'pinky-r',')':'pinky-r','_':'pinky-r','+':'pinky-r','{':'pinky-r','}':'pinky-r',
+  '\n':'pinky-r','\t':'pinky-l'
+};
+
+// Home key IDs matching our static HTML IDs exactly
+const baseHomeAnchors = {
+  'pinky-l':'key-a','ring-l':'key-s','middle-l':'key-d','index-l':'key-f',
+  'thumb-l':'key-Space','thumb-r':'key-Space',
+  'index-r':'key-j','middle-r':'key-k','ring-r':'key-l','pinky-r':'key-SEMICOLON'
+};
+
+const FINGER_GROUPS = Object.keys(baseHomeAnchors);
+
+// Exact resolveDOMKeyId from keyup.html — maps a character to its key element ID
+// Our HTML uses different IDs from keyup.html so we map accordingly
+function resolveDOMKeyId(ch){
+  if(ch===' ')  return 'key-Space';
+  if(ch==='\n') return 'key-Enter';
+  if(ch==='\t') return 'key-Tab';
+  // Special punctuation → our static HTML IDs
+  const map = {
+    '`':'key-BACKTICK',  '~':'key-BACKTICK',
+    '-':'key-MINUS',     '_':'key-MINUS',
+    '=':'key-EQUAL',     '+':'key-EQUAL',
+    '[':'key-LBRACKET',  '{':'key-LBRACKET',
+    ']':'key-RBRACKET',  '}':'key-RBRACKET',
+    '\\':'key-BACKSLASH','|':'key-BACKSLASH',
+    ';':'key-SEMICOLON', ':':'key-SEMICOLON',
+    "'": 'key-QUOTE',    '"':'key-QUOTE',
+    ',':'key-COMMA',     '<':'key-COMMA',
+    '.':'key-DOT',       '>':'key-DOT',
+    '/':'key-SLASH',     '?':'key-SLASH',
+    '!':'key-1','@':'key-2','#':'key-3','$':'key-4','%':'key-5',
+    '^':'key-6','&':'key-7','*':'key-8','(':'key-9',')':'key-0',
+  };
+  if(map[ch]) return map[ch];
+  // Letters and digits — our IDs are lowercase
+  return 'key-' + ch.toLowerCase();
+}
+
+// charToKey: character → canonical key label (for key ID lookup)
+function charToKey(ch){ return ch; } // we use resolveDOMKeyId directly now
+
+// keyId: unused externally but kept for compatibility
+function keyId(k){ return k; }
+
+let _hovBuilt = false;
+
+function getKeyCenter(elemId){
+  const el = document.getElementById(elemId);
+  if(!el) return null;
+  // Use the SVG canvas as reference (same as keyup.html canvasContainer)
+  const canvas = document.getElementById('kb-hand-overlay');
+  const base   = canvas.getBoundingClientRect();
+  const r      = el.getBoundingClientRect();
+  return { x:(r.left+r.width/2)-base.left, y:(r.top+r.height/2)-base.top };
+}
+
+function buildHandOverlay(){
+  _hovBuilt = false;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    syncKinematicSystem(null);
+    _hovBuilt = true;
+    if(tyState && tyState.text){
+      highlightKey(tyState.text[tyState.idx] || tyState.text[0], false);
+    }
+  }));
+}
+
+// Exact syncKinematicSystem from keyup.html adapted to our key IDs
+function syncKinematicSystem(activeChar){
+  document.querySelectorAll('.key').forEach(k=>k.classList.remove('jungle-target','active-next'));
+  document.querySelectorAll('.guide-path').forEach(p=>p.classList.remove('active'));
+
+  const canvas = document.getElementById('kb-hand-overlay');
+  if(!canvas) return;
+
+  // Get home row key centers (same as keyup.html)
+  const pL=getKeyCenter('key-a'), rL=getKeyCenter('key-s'),
+        mL=getKeyCenter('key-d'), iL=getKeyCenter('key-f'),
+        tL=getKeyCenter('key-Space');
+  const pR=getKeyCenter('key-SEMICOLON'), rR=getKeyCenter('key-l'),
+        mR=getKeyCenter('key-k'),  iR=getKeyCenter('key-j'),
+        tR=getKeyCenter('key-Space');
+
+  if(!pL||!pR||!tL) return;
+
+  // Offset thumbs left/right of spacebar (exact from keyup.html)
+  tL.x -= 65; tR.x += 65;
+
+  // Draw palm shapes (exact from keyup.html)
+  const lp=document.getElementById('left-palm');
+  const rp=document.getElementById('right-palm');
+  if(lp) lp.setAttribute('d',
+    `M ${pL.x-16},${pL.y} C ${rL.x},${rL.y+25} ${iL.x},${iL.y+25} ${tL.x+15},${tL.y} `+
+    `L ${tL.x-5},${tL.y+45} C ${mL.x},${mL.y+70} ${pL.x-30},${pL.y+55} ${pL.x-16},${pL.y} Z`);
+  if(rp) rp.setAttribute('d',
+    `M ${pR.x+16},${pR.y} C ${rR.x},${rR.y+25} ${iR.x},${iR.y+25} ${tR.x-15},${tR.y} `+
+    `L ${tR.x+5},${tR.y+45} C ${mR.x},${mR.y+70} ${pR.x+30},${pR.y+55} ${pR.x+16},${pR.y} Z`);
+
+  // Map finger groups to home centers
+  const homePos = {
+    'pinky-l':pL,'ring-l':rL,'middle-l':mL,'index-l':iL,'thumb-l':tL,
+    'thumb-r':tR,'index-r':iR,'middle-r':mR,'ring-r':rR,'pinky-r':pR
+  };
+
+  // Get active char info
+  const targetFinger = activeChar!=null ? fingerMap[activeChar] : null;
+  let dest = null;
+  let targetKeyId = null;
+
+  if(activeChar!=null && targetFinger){
+    targetKeyId = resolveDOMKeyId(activeChar);
+    dest = getKeyCenter(targetKeyId);
+    // Highlight the key
+    const keyEl = document.getElementById(targetKeyId);
+    if(keyEl) keyEl.classList.add('jungle-target');
+  }
+
+  // Draw each finger guide path (exact logic from keyup.html)
+  FINGER_GROUPS.forEach(fg => {
+    const pathEl = document.getElementById(`path-${fg}`);
+    const home   = homePos[fg];
+    if(!pathEl||!home) return;
+
+    if(fg === targetFinger && dest){
+      // Active finger: quadratic bezier arc to target
+      const cpX = (home.x+dest.x)/2;
+      const cpY = Math.min(home.y,dest.y)-40;
+      pathEl.setAttribute('d', `M ${home.x},${home.y} Q ${cpX},${cpY} ${dest.x},${dest.y}`);
+      pathEl.setAttribute('stroke', designColors[fg]);
+      pathEl.classList.add('active');
+    } else {
+      // Other fingers: dot at home (subtle presence)
+      pathEl.setAttribute('d', `M ${home.x},${home.y} L ${home.x},${home.y}`);
+      pathEl.setAttribute('stroke','rgba(255,255,255,0.06)');
+      pathEl.classList.add('active');
+    }
+  });
+}
+
+// Public API for typing engine
+function highlightKey(ch, wasPressed){
+  if(!_hovBuilt){ return; }
+  syncKinematicSystem(ch || null);
+}
+
+// ════════════════════════════════════════════════
+//  TYPING ENGINE
+// ════════════════════════════════════════════════
+let tyState = {text:'',lang:'',diff:'',snippetIdx:0,idx:0,errors:0,startTime:null,timer:null,done:false,title:'',mistakes:{}};
+
+// Build lines array from code: each line is {indent, content}
+// When user hits Enter at a newline, we auto-advance through leading spaces
+function startTyping(lang,diff,idx){
+  closeModalDirect();
+  const snip=SNIPPETS[lang][diff][idx];
+  tyState={text:snip.code,lang,diff,snippetIdx:idx,idx:0,errors:0,startTime:null,timer:null,done:false,title:snip.title,mistakes:{}};
+  document.getElementById('ty-title').textContent=snip.title;
+  document.getElementById('ty-sub').textContent=lang.charAt(0).toUpperCase()+lang.slice(1)+' · '+diff.charAt(0).toUpperCase()+diff.slice(1);
+  document.getElementById('tw-filename').textContent=LANG_EXTS[lang];
+  document.getElementById('tw-lang').textContent=lang;
+  document.getElementById('result-panel').classList.remove('show');
+  document.getElementById('code-area').style.display='';
+  document.getElementById('tw-input-bar').style.display='';
+  document.getElementById('tw-hint-text').textContent='Click here and start typing…';
+  resetStats();
+  renderTyping();
+  highlightKey(snip.code[0], false);
+  showScreen('typing');
+  setTimeout(()=>document.getElementById('typing-input').focus(),100);
+}
+
+function retrySnippet(){ startTyping(tyState.lang,tyState.diff,tyState.snippetIdx); }
+
+function goBack(){
+  clearInterval(tyState.timer);
+  if(tyState.lang){ try{ openLang(tyState.lang); }catch(e){} }
+  showScreen('home');
+}
+
+function resetStats(){
+  setWPM(0); setAcc(100); setErr(0); setTime(0);
+  document.getElementById('ty-prog').style.width='0%';
+}
+
+function setWPM(v){ const el=document.getElementById('ty-wpm'); el.textContent=v; el.className='v'+(v>=80?' green':v<20&&tyState.startTime?' amber':''); }
+function setAcc(v){ const el=document.getElementById('ty-acc'); el.textContent=v+'%'; el.className='v'+(v<90?' red':v<95?' amber':''); }
+function setErr(v){ const el=document.getElementById('ty-err'); el.textContent=v; el.className='v'+(v>0?' red':''); }
+function setTime(v){ document.getElementById('ty-time').textContent=v+'s'; }
+function calcWPM(el){ return el?Math.round((tyState.idx/5)/(el/60)):0; }
+function calcAcc(){ return tyState.idx?Math.round(((tyState.idx-tyState.errors)/tyState.idx)*100):100; }
+function updateProgress(){ const pct=tyState.text.length?(tyState.idx/tyState.text.length)*100:0; document.getElementById('ty-prog').style.width=Math.min(pct,100)+'%'; }
+
+/* RENDER — no character popping, stable layout using monospace pre with fixed height */
+function renderTyping(){
+  const area = document.getElementById('code-area');
+  const t = tyState.text;
+  let html='';
+  for(let i=0;i<t.length;i++){
+    const ch=t[i];
+    if(ch==='\n'){
+      if(i<tyState.idx){
+        const nlCls = tyState.mistakes[i] ? 'ch-err' : 'ch-nl-done';
+        html+=`<span class="${nlCls}">↵</span>\n`;
+      } else if(i===tyState.idx) html+=`<span class="ch-nl-cur">↵</span>\n`;
+      else html+=`<span class="ch-nl-wait">↵</span>\n`;
+    } else {
+      const dispHtml=esc(ch);
+      if(i<tyState.idx){
+        const cCls = tyState.mistakes[i] ? 'ch-err' : 'ch-done';
+        html+=`<span class="${cCls}">${dispHtml}</span>`;
+      } else if(i===tyState.idx) html+=`<span class="ch-cur">${dispHtml}</span>`;
+      else                     html+=`<span class="ch-wait">${dispHtml}</span>`;
+    }
+  }
+  area.innerHTML=html;
+  // Auto-scroll: bring current character into view
+  const curEl = area.querySelector('.ch-cur, .ch-nl-cur');
+  if(curEl){
+    const areaRect = area.getBoundingClientRect();
+    const curRect = curEl.getBoundingClientRect();
+    const relTop = curEl.offsetTop - area.scrollTop;
+    const areaH = area.clientHeight;
+    if(relTop < 40){
+      area.scrollTop = curEl.offsetTop - 40;
+    } else if(relTop > areaH - 60){
+      area.scrollTop = curEl.offsetTop - areaH + 60;
+    }
+  }
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function focusTyping(){ document.getElementById('typing-input').focus(); }
+
+document.getElementById('typing-input').addEventListener('keydown', function(e){
+  if(tyState.done) return;
+
+  if(e.key==='Backspace'){
+    e.preventDefault();
+    if(tyState.idx>0) tyState.idx--;
+    renderTyping();
+    updateProgress();
+    highlightKey(tyState.text[tyState.idx]);
+    return;
+  }
+
+  if(e.key==='Tab'){
+    e.preventDefault();
+    // type two spaces (tab = 2 spaces in most code)
+    typeChar(' '); typeChar(' ');
+    return;
+  }
+
+  if(e.key==='Enter'){
+    e.preventDefault();
+    const expected = tyState.text[tyState.idx];
+    if(expected === '\n'){
+      // Correctly type the newline
+      typeChar('\n');
+      // AUTO-SKIP indentation on new line
+      autoSkipIndent();
+    }
+    return;
+  }
+
+  if(e.key.length===1) typeChar(e.key);
+});
+
+// After pressing Enter, auto-advance through leading spaces/tabs in the new line
+function autoSkipIndent(){
+  const t = tyState.text;
+  // count how many spaces start at current position
+  while(tyState.idx < t.length && t[tyState.idx]===' '){
+    // auto-type them correctly (no error counted)
+    tyState.idx++;
+  }
+  renderTyping();
+  updateProgress();
+  if(tyState.idx>=t.length) finishSession();
+  else highlightKey(t[tyState.idx]);
+}
+
+let pressFlashTimer = null;
+function typeChar(ch){
+  if(tyState.done) return;
+  if(!tyState.startTime){
+    tyState.startTime=Date.now();
+    document.getElementById('tw-hint-text').textContent='typing…';
+    tyState.timer=setInterval(()=>{
+      const el=Math.round((Date.now()-tyState.startTime)/1000);
+      setWPM(calcWPM(el)); setAcc(calcAcc()); setErr(tyState.errors); setTime(el); updateProgress();
+    },300);
+  }
+  const expected=tyState.text[tyState.idx];
+  const correct=(ch===expected);
+  if(!correct){ tyState.errors++; tyState.mistakes[tyState.idx]=true; }
+
+  // Flash press on current key
+  const pressKeyLabel = charToKey(expected);
+  const pressKeyId = resolveDOMKeyId(expected);
+  const pressKeyEl = document.getElementById(pressKeyId);
+  if(pressKeyEl){
+    pressKeyEl.classList.remove('active-next','jungle-target');
+    pressKeyEl.classList.add(correct ? 'pressed-correct' : 'pressed-wrong');
+    setTimeout(()=>pressKeyEl.classList.remove('pressed-correct','pressed-wrong'), 180);
+  }
+
+  tyState.idx++;
+  renderTyping();
+  updateProgress();
+  if(tyState.idx>=tyState.text.length){ finishSession(); return; }
+
+  // Move pointer to NEXT character after short delay
+  clearTimeout(pressFlashTimer);
+  pressFlashTimer = setTimeout(()=>{
+    const next = tyState.text[tyState.idx];
+    if(next !== undefined) highlightKey(next, false);
+  }, 150);
+}
+
+function rankLabel(wpm,acc){
+  if(wpm>=90&&acc>=98) return '🚀 Elite Hacker';
+  if(wpm>=70&&acc>=96) return '⚡ Advanced Coder';
+  if(wpm>=50&&acc>=93) return '💻 Proficient';
+  if(wpm>=35&&acc>=88) return '🔧 Developing';
+  if(wpm>=20) return '📖 Learning';
+  return '🐢 Keep Going!';
+}
+
+function finishSession(){
+  clearInterval(tyState.timer); tyState.done=true;
+  highlightKey(null);
+
+  const elapsed = Math.max(1, Math.round((Date.now()-tyState.startTime)/1000));
+  const wpm = calcWPM(elapsed);
+  const acc = calcAcc();
+
+  // ── Save progress if logged in ──────────────────────────────────────────
+  if(currentUser && !currentUser.isOwner){
+    const p = currentProgress;
+    p.sessions = (p.sessions||0)+1;
+    if(wpm > (p.bestWpm||0)) p.bestWpm = wpm;
+    p.totalAcc = (p.totalAcc||0)+acc;
+    p.accCount = (p.accCount||0)+1;
+    const key = `${tyState.lang}_${tyState.diff}_${tyState.snippetIdx}`;
+    if(!p.snippetsDone) p.snippetsDone=[];
+    if(!p.snippetsDone.includes(key)) p.snippetsDone.push(key);
+    saveProgress();
+    logSession(wpm, acc, tyState.errors, elapsed);
+    renderHome();
+  }
+
+  // ── Populate result screen ──────────────────────────────────────────────
+  // Emoji + title based on performance
+  let emoji='🎉', title='Great work!';
+  if(acc>=98 && wpm>=40){ emoji='🏆'; title='Outstanding!'; }
+  else if(acc>=95 && wpm>=25){ emoji='🌟'; title='Excellent!'; }
+  else if(acc<80){ emoji='😅'; title='Keep practising!'; }
+  else if(wpm<10){ emoji='🐢'; title='Slow and steady!'; }
+
+  document.getElementById('rs-emoji').textContent = emoji;
+  document.getElementById('rs-title').textContent = title;
+  const rsSub=document.getElementById('rs-subtitle'); if(rsSub) rsSub.textContent=`${tyState.title||'Exercise'} · ${tyState.lang||''} · ${tyState.diff||''}`;
+
+  document.getElementById('rs-wpm').textContent  = wpm;
+  document.getElementById('rs-acc').textContent  = acc+'%';
+  document.getElementById('rs-err').textContent  = tyState.errors;
+  document.getElementById('rs-time').textContent = elapsed+'s';
+  const rsRank=document.getElementById('rs-rank'); if(rsRank) rsRank.textContent='🏅 '+rankLabel(wpm,acc);
+
+  // Missed characters heatmap
+  const missedChars = {};
+  Object.keys(tyState.mistakes||{}).forEach(i=>{
+    const ch = tyState.text[parseInt(i)];
+    if(ch) missedChars[ch] = (missedChars[ch]||0)+1;
+  });
+  const missKeys = Object.keys(missedChars);
+  const misPanel = document.getElementById('rs-mistakes-panel');
+  const misChars = document.getElementById('rs-mistake-chars');
+  if(missKeys.length>0){
+    misChars.innerHTML = missKeys
+      .sort((a,b)=>missedChars[b]-missedChars[a])
+      .slice(0,20)
+      .map(ch=>`<span class="rs-mc">${ch==' '?'␣':ch==='\n'?'↵':ch} <small>×${missedChars[ch]}</small></span>`)
+      .join('');
+    misPanel.style.display='block';
+  } else {
+    misPanel.style.display='none';
+  }
+
+  // ── Show result screen ──────────────────────────────────────────────────
+  showScreen('result');
+
+  // Guest users see results freely; auth only triggered when they click Next
+}
+
+function retryFromResult(){
+  startTyping(tyState.lang, tyState.diff, tyState.snippetIdx);
+}
+
+function nextExercise(){
+  if(!currentUser){
+    // Not registered → show registration page (dismissable with X)
+    openAuthPopup('register', true);
+    document.getElementById('auth-title').textContent = 'Create your account';
+    document.getElementById('auth-sub-text').textContent = 'Register to unlock the next exercise and track your progress.';
+    return;
+  }
+  // Registered → go straight to next snippet in same lang+diff
+  const db = loadDB();
+  const snips = (db.snippets||{})[tyState.lang]?.[tyState.diff] || [];
+  const nextIdx = (tyState.snippetIdx + 1) % snips.length;
+  startTyping(tyState.lang, tyState.diff, nextIdx);
+}
+
+// ════════════════════════════════════════════════
+//  ADMIN
+// ════════════════════════════════════════════════
+function renderAdmin(){
+  const db=getDB();
+  const users=db.users||{};
+  const log=db.session_log||[];
+  const emails=Object.keys(users);
+
+  document.getElementById('admin-sub').textContent=`Logged in as ${OWNER_EMAIL}`;
+
+  const totalSessions=log.length;
+  const avgWpm=log.length?Math.round(log.reduce((a,s)=>a+s.wpm,0)/log.length):0;
+  const avgAcc=log.length?Math.round(log.reduce((a,s)=>a+s.acc,0)/log.length):0;
+  document.getElementById('admin-stats').innerHTML=`
+    <div class="admin-stat"><div class="v">${emails.length}</div><div class="l">Total Users</div></div>
+    <div class="admin-stat"><div class="v">${totalSessions}</div><div class="l">Total Sessions</div></div>
+    <div class="admin-stat"><div class="v">${avgWpm}</div><div class="l">Avg WPM</div></div>
+    <div class="admin-stat"><div class="v">${avgAcc}%</div><div class="l">Avg Accuracy</div></div>`;
+
+  const tbody=document.getElementById('admin-user-tbody');
+  if(!emails.length){
+    tbody.innerHTML=`<tr><td colspan="7" class="empty-note">No users registered yet.</td></tr>`;
+  } else {
+    tbody.innerHTML=emails.map(email=>{
+      const u=users[email];
+      const p=u.progress||{};
+      const reg=u.registeredAt?new Date(u.registeredAt).toLocaleDateString():'—';
+      const avgA=p.accCount?Math.round(p.totalAcc/p.accCount)+'%':'—';
+      return `<tr>
+        <td>${u.name}</td>
+        <td style="font-family:var(--mono);font-size:12px;color:var(--text2);">${email}</td>
+        <td>${p.sessions||0}</td>
+        <td style="color:var(--green);">${p.bestWpm||0}</td>
+        <td>${avgA}</td>
+        <td>${(p.snippetsDone||[]).length}</td>
+        <td style="color:var(--text3);">${reg}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  const logTbody=document.getElementById('admin-session-tbody');
+  const recent=log.slice(-50).reverse();
+  if(!recent.length){
+    logTbody.innerHTML=`<tr><td colspan="8" class="empty-note">No sessions logged yet.</td></tr>`;
+  } else {
+    logTbody.innerHTML=recent.map(s=>{
+      const uName=(db.users[s.email]||{}).name||s.email;
+      const t=new Date(s.at);
+      const ts=t.toLocaleDateString()+' '+t.toLocaleTimeString();
+      return `<tr>
+        <td>${uName}</td><td>${s.lang}</td><td>${s.diff}</td>
+        <td style="color:var(--text2);">${s.snippetTitle||'—'}</td>
+        <td style="color:var(--green);">${s.wpm}</td>
+        <td>${s.acc}%</td>
+        <td style="color:${s.errors>0?'var(--red)':'var(--text3)'};">${s.errors}</td>
+        <td style="color:var(--text3);font-size:11px;">${ts}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+// ════════════════════════════════════════════════
+//  ROUTING
+// ════════════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('screen-'+id);
+  if(el) el.classList.add('active');
+}
+
+// Enter key shortcuts
+document.getElementById('input-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doAuth(); });
+document.getElementById('input-email').addEventListener('keydown',e=>{ if(e.key==='Enter') doAuth(); });
+document.getElementById('input-confirm').addEventListener('keydown',e=>{ if(e.key==='Enter') doAuth(); });
+document.getElementById('owner-pass-confirm').addEventListener('keydown',e=>{ if(e.key==='Enter') setupOwnerPassword(); });
+
+// Refocus typing input whenever key pressed on typing screen
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('screen-typing').classList.contains('active') && !tyState.done && e.target.id!=='typing-input'){
+    document.getElementById('typing-input').focus();
+  }
+});
+
+// Build keyboard + init
+buildKeyboard();
+init();
+</script>
+</body>
+</html>
